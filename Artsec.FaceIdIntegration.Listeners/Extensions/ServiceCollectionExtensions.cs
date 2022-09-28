@@ -7,8 +7,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddListeners(this IServiceCollection services)
     {
-        services.AddSingleton<IListener, FaceIdListener>();
-        services.AddSingleton<IListener, ControllerListener>();
+        services.AddSingleton<FaceIdListener>();
+        services.AddSingleton<ControllerListener>();
 
         return services;
     }

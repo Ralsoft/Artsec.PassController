@@ -4,7 +4,7 @@ namespace Artsec.PassController.Services;
 
 internal class ValidationService : IValidationService
 {
-    public Task<bool> ValidatePassAsync()
+    public Task<bool> ValidatePassAsync(Domain.Requests.PassRequestWithMode payload)
     {
         throw new NotImplementedException();
     }

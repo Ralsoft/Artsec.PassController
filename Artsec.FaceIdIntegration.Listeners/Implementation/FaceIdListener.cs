@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Artsec.PassController.Listeners.Implementation;
 
-namespace Artsec.PassController.Listeners.Implementation;
-
-internal class FaceIdListener : IListener
+public class FaceIdListener : IListener
 {
     public string SourceName => "FaceId";
     public string SourceType => "HTTP";
 
 
-    public event EventHandler<EventArgs> MessageReceived;
+    public event EventHandler<string> MessageReceived;
 
     public void StartListen()
     {

@@ -2,7 +2,7 @@
 
 namespace Artsec.PassController.Services.Interfaces;
 
-public interface IValidationService
+public interface IInputAggregator
 {
-    Task<bool> ValidatePassAsync(PassRequestWithMode payload);
+    event EventHandler<PassRequestWithMode> InputReceived;
 }

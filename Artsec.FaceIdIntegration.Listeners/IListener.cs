@@ -10,7 +10,7 @@ public interface IListener
 {
     string SourceName { get; }
     string SourceType { get; }
-    event EventHandler<EventArgs> MessageReceived;
+    event EventHandler<string> MessageReceived;
     void StartListen();
     void StopListen();
 }

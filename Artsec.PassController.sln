@@ -9,13 +9,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2CDE3929-F7A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Artsec.PassController.Listeners", "Artsec.FaceIdIntegration.Listeners\Artsec.PassController.Listeners.csproj", "{FAE1B4FE-54B2-4A90-9784-1A3B58CF2A6A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Artsec.PassController.InputAggregator", "Artsec.FaceIdIntegration.InputAggregator\Artsec.PassController.InputAggregator.csproj", "{F6BA0153-7A4A-4BEB-8A09-16925BDCFFCA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Artsec.PassController.Validation", "Artsec.FaceIdIntegration.Validation\Artsec.PassController.Validation.csproj", "{83ECD2F4-99FF-44CC-9206-B3D5A88234F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Artsec.PassController.Domain", "Artsec.PassController.Domain\Artsec.PassController.Domain.csproj", "{03DAD7EE-C9E7-4D2D-9B66-2A077F4C2031}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Artsec.PassController.Domain", "Artsec.PassController.Domain\Artsec.PassController.Domain.csproj", "{03DAD7EE-C9E7-4D2D-9B66-2A077F4C2031}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Artsec.Dal", "Artsec.Dal\Artsec.Dal.csproj", "{DF962F18-87D4-4A68-846D-7B571F27F40E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Artsec.Dal", "Artsec.Dal\Artsec.Dal.csproj", "{DF962F18-87D4-4A68-846D-7B571F27F40E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipeLight", "..\..\PipeLight\src\PipeLight\PipeLight.csproj", "{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +31,6 @@ Global
 		{FAE1B4FE-54B2-4A90-9784-1A3B58CF2A6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAE1B4FE-54B2-4A90-9784-1A3B58CF2A6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAE1B4FE-54B2-4A90-9784-1A3B58CF2A6A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F6BA0153-7A4A-4BEB-8A09-16925BDCFFCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6BA0153-7A4A-4BEB-8A09-16925BDCFFCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6BA0153-7A4A-4BEB-8A09-16925BDCFFCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6BA0153-7A4A-4BEB-8A09-16925BDCFFCA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{83ECD2F4-99FF-44CC-9206-B3D5A88234F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{83ECD2F4-99FF-44CC-9206-B3D5A88234F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83ECD2F4-99FF-44CC-9206-B3D5A88234F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -47,6 +43,10 @@ Global
 		{DF962F18-87D4-4A68-846D-7B571F27F40E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF962F18-87D4-4A68-846D-7B571F27F40E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF962F18-87D4-4A68-846D-7B571F27F40E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,7 +54,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4A01DD33-4DDC-46A0-AC4A-F7221807328D} = {2CDE3929-F7A7-4F81-A266-4EDD588FEA3A}
 		{FAE1B4FE-54B2-4A90-9784-1A3B58CF2A6A} = {2CDE3929-F7A7-4F81-A266-4EDD588FEA3A}
-		{F6BA0153-7A4A-4BEB-8A09-16925BDCFFCA} = {2CDE3929-F7A7-4F81-A266-4EDD588FEA3A}
 		{83ECD2F4-99FF-44CC-9206-B3D5A88234F0} = {2CDE3929-F7A7-4F81-A266-4EDD588FEA3A}
 		{03DAD7EE-C9E7-4D2D-9B66-2A077F4C2031} = {2CDE3929-F7A7-4F81-A266-4EDD588FEA3A}
 		{DF962F18-87D4-4A68-846D-7B571F27F40E} = {2CDE3929-F7A7-4F81-A266-4EDD588FEA3A}
