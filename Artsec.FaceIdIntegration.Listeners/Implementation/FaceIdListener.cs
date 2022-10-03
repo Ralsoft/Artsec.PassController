@@ -1,7 +1,8 @@
 ﻿namespace Artsec.PassController.Listeners.Implementation;
 
-public class FaceIdListener : IListener
+public class FaceIdListener
 {
+    public event EventHandler<ReceivedDataEventArgs> DataReceived;
     public string SourceName => "FaceId";
     public string SourceType => "HTTP";
 

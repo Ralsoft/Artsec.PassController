@@ -5,7 +5,7 @@ using PipeLight.Middlewares.Interfaces;
 
 namespace Artsec.PassController.Pipelines;
 
-internal class ValidationMiddleware : IPipelineMiddleware<PassRequestWithMode, PassRequestWithValidation>
+internal class ValidationMiddleware : IPipelineMiddleware<PassRequestWithPersonId, PassRequestWithValidation>
 {
     private readonly IValidationService _validationService;
 
@@ -14,7 +14,7 @@ internal class ValidationMiddleware : IPipelineMiddleware<PassRequestWithMode, P
         _validationService = validationService;
     }
 
-    public async Task<PassRequestWithValidation> InvokeAsync(PassRequestWithMode payload)
+    public async Task<PassRequestWithValidation> InvokeAsync(PassRequestWithPersonId payload)
     {
         var result = new PassRequestWithValidation()
         {

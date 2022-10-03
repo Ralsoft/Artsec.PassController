@@ -1,7 +1,5 @@
 using Artsec.PassController;
 using Artsec.PassController.Extensions;
-using Artsec.PassController.Listeners.Extensions;
-using System.Net.Sockets;
 using System.Text;
 
 try
@@ -30,11 +28,12 @@ try
             services.AddHostedService<Worker>();
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            IConfiguration configuration = hostContext.Configuration;
+            //IConfiguration configuration = hostContext.Configuration;
             //WorkerOptions options = configuration.GetSection("WorkerOptions").Get<WorkerOptions>();
             services.AddListeners();
             services.AddServices();
             services.AddPipelines();
+            services.AddConfigurations(hostContext.Configuration);
 
         })
         .Build();

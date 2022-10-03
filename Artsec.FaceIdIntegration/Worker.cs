@@ -38,7 +38,7 @@ namespace Artsec.PassController
             }
         }
 
-        private void OnInputReceived(object sender, PassRequestWithMode request)
+        private void OnInputReceived(object sender, PassRequestWithPersonId request)
         {
             _ = _passRequestPipeline.PushAsync(request);
         }

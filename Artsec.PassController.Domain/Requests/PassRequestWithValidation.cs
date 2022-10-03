@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Artsec.PassController.Domain.Requests;
 
-public class PassRequestWithValidation : PassRequestWithMode
+public class PassRequestWithValidation : PassRequestWithPersonId
 {
     public bool IsValid { get; set; }
 }

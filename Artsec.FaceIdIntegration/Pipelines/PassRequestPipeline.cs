@@ -5,7 +5,7 @@ using PipeLight;
 
 namespace Artsec.PassController.Pipelines;
 
-public class PassRequestPipeline : Pipeline<PassRequestWithMode>
+public class PassRequestPipeline : Pipeline<PassRequestWithPersonId>
 {
 	public PassRequestPipeline(IServiceProvider serviceProvider)
 	{

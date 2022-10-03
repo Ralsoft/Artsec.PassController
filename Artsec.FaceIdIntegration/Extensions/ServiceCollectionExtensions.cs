@@ -1,4 +1,7 @@
-﻿using Artsec.PassController.Pipelines;
+﻿using Artsec.PassController.Configs;
+using Artsec.PassController.Listeners.Configuration;
+using Artsec.PassController.Listeners.Implementation;
+using Artsec.PassController.Pipelines;
 using Artsec.PassController.Services;
 using Artsec.PassController.Services.Interfaces;
 
@@ -13,7 +16,7 @@ internal static class ServiceCollectionExtensions
         services.AddSingleton<IPersonService, PersonService>();
         services.AddSingleton<IRequestsLoggingService, RequestsLoggingService>();
         services.AddSingleton<IValidationService, ValidationService>();
-        services.AddSingleton<IInputAggregator, InputAggregator>();
+        services.AddSingleton<IInputAggregator, ListenersAggregator>();
 
         return services;
     }
@@ -21,6 +24,21 @@ internal static class ServiceCollectionExtensions
     public static IServiceCollection AddPipelines(this IServiceCollection services)
     {
         services.AddSingleton<PassRequestPipeline>();
+
+        return services;
+    }
+    public static IServiceCollection AddListeners(this IServiceCollection services)
+    {
+        services.AddSingleton<FaceIdListener>();
+        services.AddSingleton<ControllerListener>();
+
+        return services;
+    }
+    public static IServiceCollection AddConfigurations(this IServiceCollection services, IConfiguration config)
+    {
+        services.AddTransient<WorkerConfigurations>(s => new WorkerConfigurations());
+        services.AddTransient<ControllerListenerConfiguration>(s => new ControllerListenerConfiguration());
+        services.AddTransient<ControllerListenerConfiguration>(s => new ControllerListenerConfiguration());
 
         return services;
     }

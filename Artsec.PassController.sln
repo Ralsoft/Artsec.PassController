@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Artsec.Dal", "Artsec.Dal\Ar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipeLight", "..\..\PipeLight\src\PipeLight\PipeLight.csproj", "{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Artsec.PassController.ConsoleTest", "Artsec.PassController.ConsoleTest\Artsec.PassController.ConsoleTest.csproj", "{8C777214-AB9F-43AC-A1BA-5962B7C8D19C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C777214-AB9F-43AC-A1BA-5962B7C8D19C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C777214-AB9F-43AC-A1BA-5962B7C8D19C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C777214-AB9F-43AC-A1BA-5962B7C8D19C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C777214-AB9F-43AC-A1BA-5962B7C8D19C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,6 +63,7 @@ Global
 		{83ECD2F4-99FF-44CC-9206-B3D5A88234F0} = {2CDE3929-F7A7-4F81-A266-4EDD588FEA3A}
 		{03DAD7EE-C9E7-4D2D-9B66-2A077F4C2031} = {2CDE3929-F7A7-4F81-A266-4EDD588FEA3A}
 		{DF962F18-87D4-4A68-846D-7B571F27F40E} = {2CDE3929-F7A7-4F81-A266-4EDD588FEA3A}
+		{8C777214-AB9F-43AC-A1BA-5962B7C8D19C} = {2CDE3929-F7A7-4F81-A266-4EDD588FEA3A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {72B94B29-A54A-4817-9048-7419A3D78CB8}

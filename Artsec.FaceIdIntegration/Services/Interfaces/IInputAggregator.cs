@@ -4,5 +4,5 @@ namespace Artsec.PassController.Services.Interfaces;
 
 public interface IInputAggregator
 {
-    event EventHandler<PassRequestWithMode> InputReceived;
+    event EventHandler<PassRequestWithPersonId> InputReceived;
 }
