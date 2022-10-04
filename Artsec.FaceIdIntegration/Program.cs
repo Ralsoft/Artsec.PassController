@@ -30,6 +30,7 @@ try
 
             //IConfiguration configuration = hostContext.Configuration;
             //WorkerOptions options = configuration.GetSection("WorkerOptions").Get<WorkerOptions>();
+            services.AddHttpClient();
             services.AddListeners();
             services.AddServices();
             services.AddPipelines();

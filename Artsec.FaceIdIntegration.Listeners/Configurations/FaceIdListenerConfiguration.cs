@@ -1,5 +1,6 @@
 ﻿namespace Artsec.PassController.Listeners.Configurations;
 
-internal class FaceIdListenerConfiguration
+public class FaceIdListenerConfiguration
 {
+    public string Url { get; set; } = string.Empty;
 }

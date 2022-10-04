@@ -4,12 +4,7 @@ namespace Artsec.PassController.Services;
 
 internal class PersonService : IPersonService
 {
-    public Task<string> GetFaceIdPersonIdAsync(string faceId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<string> GetRfidPersonIdAsync(string rfid)
+    public Task<string> GetPersonIdAsync(string id)
     {
         throw new NotImplementedException();
     }

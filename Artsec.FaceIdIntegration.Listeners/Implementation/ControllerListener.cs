@@ -1,6 +1,6 @@
-﻿using Artsec.PassController.Listeners.Configuration;
+﻿using Artsec.PassController.Listeners.Configurations;
+using Artsec.PassController.Listeners.Events;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 
@@ -14,13 +14,11 @@ public class ControllerListener
     private readonly int _port;
     private bool _isReceiving;
 
-    public ControllerListener(ILogger<ControllerListener> logger, ControllerListenerConfiguration config) : this(config)
+    public ControllerListener(ILogger<ControllerListener> logger, ControllerListenerConfiguration config)
     {
         _logger = logger;
-    }
-    public ControllerListener(ControllerListenerConfiguration config)
-    {
         _config = config;
+
         _udpClient = new UdpClient(_config.Port);
         _port = ((IPEndPoint)_udpClient.Client.LocalEndPoint).Port;
         DataReceived = OnDataReceived;
@@ -28,7 +26,7 @@ public class ControllerListener
         Task.Run(ReceiveMessage);
     }
 
-    public event EventHandler<ReceivedDataEventArgs> DataReceived;
+    public event EventHandler<ReceivedRfidEventArgs> DataReceived;
 
     public string SourceName => "Contoller";
     public string SourceType => "UDP";
@@ -46,18 +44,17 @@ public class ControllerListener
         _isReceiving = false;
     }
 
-    private void OnDataReceived(object? sender, ReceivedDataEventArgs e)
+    private void OnDataReceived(object? sender, ReceivedRfidEventArgs e)
     {
-        Console.WriteLine(e.RemoteIp);
-        Console.WriteLine(e.Data);
+        _logger?.LogInformation(string.Join(" ", e.RemoteIp));
+        _logger?.LogInformation(string.Join(" ", e.Data));
 
         // TODO: 
     }
 
 
-    public void ReceiveMessage()
+    public async Task ReceiveMessage()
     {
-        IPEndPoint? remoteIp = null; // адрес входящего подключения
         try
         {
             _logger?.LogInformation($"Start receiving messages on port: {_port}");
@@ -66,36 +63,21 @@ public class ControllerListener
             {
                 if (_isReceiving)
                 {
-                    byte[] data = _udpClient.Receive(ref remoteIp); // получаем данные
+                    var result = await _udpClient.ReceiveAsync(); // получаем данные
+                    byte[] data = result.Buffer;
                     string message = BitConverter.ToString(data);
-                    _logger?.LogInformation($"Receiver get message: {message} from {remoteIp}");
-                    Console.WriteLine($"Receiver get message: {message} from {remoteIp}");
-                    Stopwatch sw = new Stopwatch();
-                    sw.Start();
-                    DataReceived?.Invoke(this, new ReceivedDataEventArgs(data, remoteIp));
-                    sw.Stop();
+                    _logger?.LogInformation($"Receiver get message: {message} from {result.RemoteEndPoint}");
+                    DataReceived?.Invoke(this, new ReceivedRfidEventArgs(data, result.RemoteEndPoint));
                 }
             }
         }
         catch (Exception ex)
         {
             _logger?.LogError(ex.Message);
-            Console.WriteLine(ex.Message);
         }
         finally
         {
-            Task.Run(ReceiveMessage);
+            _ = Task.Run(ReceiveMessage);
         }
     }
-}
-
-public class ReceivedDataEventArgs : EventArgs
-{
-    public ReceivedDataEventArgs(byte[] data, IPEndPoint? remoteIp)
-    {
-        Data = data;
-        RemoteIp = remoteIp;
-    }
-    public byte[] Data { get; }
-    public IPEndPoint? RemoteIp { get; }
 }

@@ -1,4 +1,4 @@
-﻿namespace Artsec.PassController.Listeners.Configuration;
+﻿namespace Artsec.PassController.Listeners.Configurations;
 
 public class ControllerListenerConfiguration
 {

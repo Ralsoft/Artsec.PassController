@@ -1,5 +1,6 @@
 ﻿using Artsec.PassController.Domain.Enums;
 using Artsec.PassController.Domain.Requests;
+using Artsec.PassController.Listeners.Events;
 using Artsec.PassController.Listeners.Implementation;
 using Artsec.PassController.Pipelines;
 using Artsec.PassController.Services.Interfaces;
@@ -14,16 +15,23 @@ internal class ListenersAggregator : IInputAggregator
 
     private readonly ControllerListener _controllerListener;
     private readonly FaceIdListener _faceIdListener;
-    private readonly PassRequestPipeline _passRequestPipeline;
+    private readonly IPersonPassModeService _personPassModeService;
+    private readonly IPersonService _personService;
+    private readonly IPassPointService _passPointService;
 
     public event EventHandler<PassRequestWithPersonId> InputReceived;
 
-    public ListenersAggregator(ControllerListener controllerListener, FaceIdListener faceIdListener)
+    public ListenersAggregator(
+        ControllerListener controllerListener, FaceIdListener faceIdListener, 
+        IPersonPassModeService personPassModeService, IPersonService personService, IPassPointService passPointService)
     {
         _controllerListener = controllerListener;
         _faceIdListener = faceIdListener;
+        _personPassModeService = personPassModeService;
+        _personService = personService;
+        _passPointService = passPointService;
         _controllerListener.DataReceived += OnControllerListeneDataReceived;
-        _faceIdListener.DataReceived += OnFaceIdListeneDataReceived;
+        _faceIdListener.MessageReceived += OnFaceIdListeneDataReceived;
     }
 
     private async Task RequestProcessing(PassRequestWithPersonId request, string key)
@@ -43,14 +51,14 @@ internal class ListenersAggregator : IInputAggregator
     {
         if (_requests.TryGetValue(key, out var request))
         {
-            _ = _passRequestPipeline.PushAsync(request);
+            InputReceived?.Invoke(this, request);
             _requests.TryRemove(key, out _);
         }
     }
-    private async void OnFaceIdListeneDataReceived(object? sender, ReceivedDataEventArgs e)
+    private async void OnFaceIdListeneDataReceived(object? sender, ReceivedFaceIdEventArgs e)
     {
-        string passPointId = await GetPassPointIdAsync(e);
-        string personId = await GetPersonIdAsync(e);
+        string passPointId = GetPassPointIdForFaceId(e.Message.CamId);
+        string personId = await GetPersonIdAsync(e.Message.FaceId);
         var passMode = await GetPassModeAsync(personId);
 
         var request = _requests.GetOrAdd(passPointId, new PassRequestWithPersonId()
@@ -61,10 +69,10 @@ internal class ListenersAggregator : IInputAggregator
         request.FaceId = e.ToString()!;
         _ = RequestProcessing(request, passPointId);
     }
-    private async void OnControllerListeneDataReceived(object? sender, ReceivedDataEventArgs e)
+    private async void OnControllerListeneDataReceived(object? sender, ReceivedRfidEventArgs e)
     {
-        string passPointId = await GetPassPointIdAsync(e);
-        string personId = await GetPersonIdAsync(e);
+        string passPointId = GetPassPointId(e.RemoteIp.Address.ToString());
+        string personId = await GetPersonIdAsync(e.Rfid);
         var passMode = await GetPassModeAsync(personId);
 
         var request = _requests.GetOrAdd(passPointId, new PassRequestWithPersonId()
@@ -78,14 +86,18 @@ internal class ListenersAggregator : IInputAggregator
 
     private async Task<PersonPassMode> GetPassModeAsync(string personId)
     {
-        return await Task.FromResult(PersonPassMode.None);
+        return await _personPassModeService.GetPersonPassModeAsync(personId);
     }
-    private async Task<string> GetPassPointIdAsync(object code)
+    private string GetPassPointId(string ip)
     {
-        return await Task.FromResult("Da");
+        return _passPointService.GetPassPointId(ip);
     }
-    private async Task<string> GetPersonIdAsync(object code)
+    private string GetPassPointIdForFaceId(int channelNumber)
     {
-        return await Task.FromResult("Da");
+        return _passPointService.GetPassPointIdForFaceId(channelNumber);
+    }
+    private async Task<string> GetPersonIdAsync(string code)
+    {
+        return await _personService.GetPersonIdAsync(code);
     }
 }

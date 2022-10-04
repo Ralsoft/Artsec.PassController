@@ -2,6 +2,5 @@
 
 public interface IPersonService
 {
-    Task<string> GetRfidPersonIdAsync(string rfid);
-    Task<string> GetFaceIdPersonIdAsync(string faceId);
+    Task<string> GetPersonIdAsync(string id);
 }
