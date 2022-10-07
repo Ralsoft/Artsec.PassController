@@ -2,6 +2,6 @@
 
 public interface IPassPointService
 {
-    string GetPassPointId(string ip);
-    string GetPassPointIdForFaceId(int cameraId);
+    int GetPassPointId(string ip, int channelNumber);
+    int GetPassPointIdForFaceId(int cameraId);
 }

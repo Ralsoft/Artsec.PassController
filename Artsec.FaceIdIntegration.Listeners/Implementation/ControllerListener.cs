@@ -23,7 +23,6 @@ public class ControllerListener
         _port = ((IPEndPoint)_udpClient.Client.LocalEndPoint).Port;
         DataReceived = OnDataReceived;
 
-        Task.Run(ReceiveMessage);
     }
 
     public event EventHandler<ReceivedRfidEventArgs> DataReceived;
@@ -37,6 +36,7 @@ public class ControllerListener
     public void StartListen()
     {
         _isReceiving = true;
+        _ = ReceiveMessage();
     }
 
     public void StopListen()
@@ -55,29 +55,22 @@ public class ControllerListener
 
     public async Task ReceiveMessage()
     {
-        try
+        while (_isReceiving)
         {
-            _logger?.LogInformation($"Start receiving messages on port: {_port}");
-            Console.WriteLine($"Start receiving messages on port: {_port}");
-            while (true)
+            try
             {
-                if (_isReceiving)
-                {
-                    var result = await _udpClient.ReceiveAsync(); // получаем данные
-                    byte[] data = result.Buffer;
-                    string message = BitConverter.ToString(data);
-                    _logger?.LogInformation($"Receiver get message: {message} from {result.RemoteEndPoint}");
-                    DataReceived?.Invoke(this, new ReceivedRfidEventArgs(data, result.RemoteEndPoint));
-                }
+                _logger?.LogInformation($"Start receiving messages on port: {_port}");
+                var result = await _udpClient.ReceiveAsync(); // получаем данные
+                byte[] data = result.Buffer;
+                string message = BitConverter.ToString(data);
+                _logger?.LogInformation($"Receiver get message: {message} from {result.RemoteEndPoint}");
+                DataReceived?.Invoke(this, new ReceivedRfidEventArgs(data, result.RemoteEndPoint));
+
             }
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex.Message);
-        }
-        finally
-        {
-            _ = Task.Run(ReceiveMessage);
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex.Message);
+            }
         }
     }
 }

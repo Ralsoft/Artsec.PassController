@@ -1,16 +1,23 @@
-﻿using Artsec.PassController.Services.Interfaces;
+﻿using Artsec.PassController.Configs;
+using Artsec.PassController.Services.Interfaces;
 
 namespace Artsec.PassController.Services;
 
 public class PassPointService : IPassPointService
 {
-    public string GetPassPointId(string ip)
+    private readonly WorkerConfigurations _configs;
+
+    public PassPointService(WorkerConfigurations configs)
     {
-        throw new NotImplementedException();
+        _configs = configs;
+    }
+    public int GetPassPointId(string ip, int channelNumber)
+    {
+        return _configs.Controllers[ip].Channels[channelNumber.ToString()];
     }
 
-    public string GetPassPointIdForFaceId(int cameraId)
+    public int GetPassPointIdForFaceId(int cameraId)
     {
-        throw new NotImplementedException();
+        return _configs.CamIdToDevId[cameraId.ToString()];
     }
 }

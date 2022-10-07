@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\PipeLight\src\PipeLight\PipeLight.csproj" />
     <ProjectReference Include="..\Artsec.FaceIdIntegration.Listeners\Artsec.PassController.Listeners.csproj" />
+    <ProjectReference Include="..\Artsec.PassController.Dal\Artsec.PassController.Dal.csproj" />
     <ProjectReference Include="..\Artsec.PassController.Domain\Artsec.PassController.Domain.csproj" />
   </ItemGroup>
 </Project>

@@ -11,5 +11,5 @@ public class ReceivedRfidEventArgs
     }
     public byte[] Data { get; }
     public IPEndPoint RemoteIp { get; }
-    public string Rfid { get; set; } = string.Empty;
+    public string? Rfid { get; set; }
 }

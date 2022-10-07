@@ -1,12 +1,20 @@
-﻿using Artsec.PassController.Domain.Enums;
+﻿using Artsec.PassController.Dal;
+using Artsec.PassController.Domain.Enums;
 using Artsec.PassController.Services.Interfaces;
 
 namespace Artsec.PassController.Services;
 
-internal class PersonPassModeService : IPersonPassModeService
+internal class PersonAuthModeService : IPersonAuthModeService
 {
-    public Task<PersonPassMode> GetPersonPassModeAsync(string personId)
+    private readonly PassControllerDbContext _dbContext;
+
+    public PersonAuthModeService(PassControllerDbContext dbContext)
     {
-        throw new NotImplementedException();
+        _dbContext = dbContext;
+    }
+    public async Task<AuthMode> GetPersonAuthModeAsync(int personId)
+    {
+        var people = await _dbContext.People.GetAsync();
+        return (AuthMode)people.First(p => p.PeopleId == personId).AuthMode;
     }
 }

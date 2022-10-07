@@ -2,7 +2,7 @@
 
 namespace Artsec.PassController.Services.Interfaces;
 
-public interface IPersonPassModeService
+public interface IPersonAuthModeService
 {
-    Task<PersonPassMode> GetPersonPassModeAsync(string personId);
+    Task<AuthMode> GetPersonAuthModeAsync(int personId);
 }

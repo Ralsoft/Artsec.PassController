@@ -1,10 +1,10 @@
 ﻿namespace Artsec.PassController.Domain.Enums;
 
-public enum PersonPassMode
+public enum AuthMode
 {
     None = 0,
     RequaredRfid = 1,
-    RequaredRfidAndPersonFaceId = 2,
+    RequaredRfidAndFaceId = 2,
     RequaredRfidAndAnyFaceId = 3,
     RequaredFaceId = 4,
     AnyIdentifier = 5,

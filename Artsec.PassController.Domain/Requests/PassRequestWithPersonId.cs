@@ -2,5 +2,7 @@
 
 public class PassRequestWithPersonId : PassRequest
 {
-    public string PersonId { get; set; } = string.Empty;
+    public int PersonId => RfidPersonId != 0 ? RfidPersonId : FaceIdPersonId;  
+    public int RfidPersonId { get; set; }
+    public int FaceIdPersonId { get; set; }
 }

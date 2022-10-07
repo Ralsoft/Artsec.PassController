@@ -1,4 +1,5 @@
 ﻿using Artsec.PassController.Configs;
+using Artsec.PassController.Dal;
 using Artsec.PassController.Listeners.Configurations;
 using Artsec.PassController.Listeners.Implementation;
 using Artsec.PassController.Pipelines;
@@ -9,10 +10,17 @@ namespace Artsec.PassController.Extensions;
 
 internal static class ServiceCollectionExtensions
 {
+    public static IServiceCollection AddDal(this IServiceCollection services, IConfiguration config)
+    {
+        services.AddSingleton<PassControllerDbContext>();
+        services.AddSingleton<IConnectionProvider>(new ConnectionProvider(config.Get<WorkerConfigurations>().ConnectionString));
+
+        return services;
+    }
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddSingleton<ICommandSender, CommandSender>();
-        services.AddSingleton<IPersonPassModeService, PersonPassModeService>();
+        services.AddSingleton<IPersonAuthModeService, PersonAuthModeService>();
         services.AddSingleton<IPersonService, PersonService>();
         services.AddSingleton<IRequestsLoggingService, RequestsLoggingService>();
         services.AddSingleton<IValidationService, ValidationService>();

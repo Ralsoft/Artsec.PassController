@@ -22,8 +22,16 @@ internal class CommandSenderMiddleware : IPipelineMiddleware<PassRequestWithVali
     {
         if (payload.IsValid)
         {
-            await _commandSender.SendAsync();
+            if (payload.AuthMode == Domain.Enums.AuthMode.RequaredFaceId ||
+                (payload.AuthMode == Domain.Enums.AuthMode.AnyIdentifier && payload.FaceId != null))
+            {
+                await _commandSender.SendOpenDoorAsync(payload.Channel, payload.RemoteAddress, payload.RemotePort);
+            }
+            else
+            {
+                await _commandSender.SendAllowPassAsync(payload.Data, payload.RemoteAddress, payload.RemotePort);
+            }
         }
-        return await Task.FromResult(payload);
+        return payload;
     }
 }

@@ -16,15 +16,17 @@ internal class ValidationMiddleware : IPipelineMiddleware<PassRequestWithPersonI
 
     public async Task<PassRequestWithValidation> InvokeAsync(PassRequestWithPersonId payload)
     {
+
         var result = new PassRequestWithValidation()
         {
             FaceId = payload.FaceId,
-            PassMode = payload.PassMode,
-            PersonId = payload.PersonId,
+            AuthMode = payload.AuthMode,
+            RfidPersonId = payload.RfidPersonId,
             Rfid = payload.Rfid,
         };
-        bool isValid = await _validationService.ValidatePassAsync(payload); 
-        result.IsValid = isValid;
+        int validCode = await _validationService.ValidatePassAsync(payload);
+        result.IsValid = validCode == 0;
+        result.ValidCode = validCode;
 
         return result;
     }

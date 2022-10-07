@@ -2,5 +2,5 @@
 
 public interface IPersonService
 {
-    Task<string> GetPersonIdAsync(string id);
+    Task<int> GetPersonIdAsync(string? identifier);
 }

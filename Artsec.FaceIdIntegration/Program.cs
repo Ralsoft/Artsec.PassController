@@ -14,11 +14,10 @@ try
             logging.ClearProviders();
             logging.AddConfiguration(context.Configuration.GetSection("Logging"));
             logging.AddConsole();
-            string path = context.Configuration.GetSection("WorkerOptions").GetValue<string>("LogFolerPath");
             int? retainedFileCountLimit = context.Configuration.GetSection("WorkerOptions").GetValue<int?>("retainedFileCountLimit");
-            LogLevel foo = context.Configuration.GetSection("Logging:LogLevel").GetValue<LogLevel>("Default");
+            var path = Directory.GetCurrentDirectory();
             logging.AddFile(
-                pathFormat: $"{path}\\Log.log",
+                pathFormat: $"{path}\\Logs\\Log.log",
                 minimumLevel: LogLevel.Trace,
                 retainedFileCountLimit: retainedFileCountLimit,
                 outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff}\t-\t[{Level:u3}] {Message}{NewLine}{Exception}");
@@ -34,6 +33,7 @@ try
             services.AddListeners();
             services.AddServices();
             services.AddPipelines();
+            services.AddDal(hostContext.Configuration);
             services.AddConfigurations(hostContext.Configuration);
 
         })

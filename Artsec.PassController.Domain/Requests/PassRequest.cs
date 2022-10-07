@@ -9,10 +9,15 @@ namespace Artsec.PassController.Domain.Requests;
 
 public class PassRequest
 {
-    public string Rfid { get; set; } = string.Empty;
-    public string FaceId { get; set; } = string.Empty;
-    public PersonPassMode PassMode { get; set; }
+    public int DeviceId { get; set; }
+    public string? Rfid { get; set; }
+    public string? FaceId { get; set; }
+    public AuthMode AuthMode { get; set; }
     public DateTime CreationTime { get; } = DateTime.Now;
+    public int Channel { get; set; }
+    public string? RemoteAddress { get; set; }
+    public int RemotePort { get; set; }
+    public byte[] Data { get; set; } = Array.Empty<byte>();
 
     public bool IsReadyToProcessing()
     {
@@ -21,16 +26,16 @@ public class PassRequest
 
 
         Func<bool> validate = () => false;
-        if (PassMode == PersonPassMode.RequaredRfid)
-            validate = () => Rfid != string.Empty;
-        else if (PassMode == PersonPassMode.RequaredRfidAndPersonFaceId)
-            validate = () => Rfid != string.Empty && FaceId != string.Empty;
-        else if (PassMode == PersonPassMode.RequaredRfidAndAnyFaceId)
-            validate = () => Rfid != string.Empty && FaceId != string.Empty;
-        else if (PassMode == PersonPassMode.RequaredFaceId)
-            validate = () => FaceId != string.Empty;
-        else if (PassMode == PersonPassMode.AnyIdentifier)
-            validate = () => Rfid != string.Empty || FaceId != string.Empty;
+        if (AuthMode == AuthMode.RequaredRfid)
+            validate = () => Rfid != null;
+        else if (AuthMode == AuthMode.RequaredRfidAndFaceId)
+            validate = () => Rfid != null && FaceId != null;
+        else if (AuthMode == AuthMode.RequaredRfidAndAnyFaceId)
+            validate = () => Rfid != null && FaceId != null;
+        else if (AuthMode == AuthMode.RequaredFaceId)
+            validate = () => FaceId != null;
+        else if (AuthMode == AuthMode.AnyIdentifier)
+            validate = () => Rfid != null || FaceId != null;
 
         return validate.Invoke();
     }

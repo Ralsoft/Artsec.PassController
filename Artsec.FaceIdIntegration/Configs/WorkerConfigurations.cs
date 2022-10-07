@@ -3,7 +3,7 @@ using Artsec.PassController.Listeners.Configurations;
 
 namespace Artsec.PassController.Configs;
 
-internal class WorkerConfigurations
+public class WorkerConfigurations
 {
     public string ConnectionString { get; set; } = string.Empty;
     public Dictionary<string, Controller> Controllers { get; set; } = new();

@@ -9,4 +9,5 @@ namespace Artsec.PassController.Domain.Requests;
 public class PassRequestWithValidation : PassRequestWithPersonId
 {
     public bool IsValid { get; set; }
+    public int ValidCode { get; set; }
 }

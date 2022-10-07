@@ -10,7 +10,7 @@ public class RfidMessage
     public MessageType MessageType { get; set; }
     public byte[] Body { get; set; } = Array.Empty<byte>();
     public byte[] CheckSum { get; set; } = Array.Empty<byte>();
-
+    public byte Channel => Body.Skip(4).Take(1).First();
     public static RfidMessage Parse(byte[] data)
     {
         var message = new RfidMessage();
