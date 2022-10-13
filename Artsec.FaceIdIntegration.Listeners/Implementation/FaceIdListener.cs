@@ -44,12 +44,11 @@ public class FaceIdListener
                 while (!streamReader.EndOfStream && !isReaded)
                 {
                     var message = await streamReader.ReadLineAsync();
-                    _logger?.LogDebug(message);
+                    //_logger?.LogDebug(message);
 
                     var match = regex.Match(message);
                     if (match.Success)
                     {
-                        _logger?.LogDebug("Matched!");
                         isReaded = true;
                         var faceIdMessage = JsonSerializer.Deserialize<FaceIdMessage>(match.Value);
                         if(faceIdMessage.CamId != string.Empty)

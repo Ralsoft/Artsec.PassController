@@ -1,5 +1,7 @@
 ﻿using Artsec.PassController.Domain.CRC;
 using Artsec.PassController.Domain.Exceptions;
+using Artsec.PassController.Domain.Helpers;
+using System.ComponentModel;
 
 namespace Artsec.PassController.Domain.Messages;
 
@@ -11,6 +13,8 @@ public class RfidMessage
     public byte[] Body { get; set; } = Array.Empty<byte>();
     public byte[] CheckSum { get; set; } = Array.Empty<byte>();
     public byte Channel => Body.Skip(4).Take(1).First();
+    public byte[] Rfid => RfidHelper.ConvertMessageBodyToRfid(Body);
+    public string RfidString => RfidHelper.RfidToString(Rfid);
     public static RfidMessage Parse(byte[] data)
     {
         var message = new RfidMessage();

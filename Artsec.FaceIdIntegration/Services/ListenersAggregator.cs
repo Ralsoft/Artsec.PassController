@@ -5,6 +5,7 @@ using Artsec.PassController.Listeners.Events;
 using Artsec.PassController.Listeners.Implementation;
 using Artsec.PassController.Services.Interfaces;
 using System.Collections.Concurrent;
+using System.Text;
 
 namespace Artsec.PassController.Services;
 
@@ -31,8 +32,8 @@ internal class ListenersAggregator : IInputAggregator
         _personPassModeService = personPassModeService;
         _personService = personService;
         _passPointService = passPointService;
-        _controllerListener.DataReceived += OnControllerListeneDataReceived;
-        _faceIdListener.MessageReceived += OnFaceIdListeneDataReceived;
+        _controllerListener.MessageReceived += OnControllerListeneMessageReceived;
+        _faceIdListener.MessageReceived += OnFaceIdListeneMessageReceived;
 
         _controllerListener.StartListen();
         _faceIdListener.StartListen();
@@ -55,26 +56,28 @@ internal class ListenersAggregator : IInputAggregator
     {
         if (_requests.TryGetValue(key, out var request))
         {
-            _logger?.LogInformation($"Inner FaceId = {request.FaceId}");
             InputReceived?.Invoke(this, request);
             _requests.TryRemove(key, out _);
         }
     }
-    private async void OnFaceIdListeneDataReceived(object? sender, ReceivedFaceIdEventArgs e)
+    private async void OnFaceIdListeneMessageReceived(object? sender, ReceivedFaceIdEventArgs e)
     {
         try
         {
-            _logger?.LogInformation(e.Message.SrcAction);
             if (e.Message.SrcAction != "FIND_PERSON")
                 return;
             int passPointId = GetPassPointIdForFaceId(int.Parse(e.Message.CamId));
             int personId = await GetPersonIdAsync(e.Message.FaceId);
-            var passMode = await GetAuthModeAsync(personId);
+            var authMode = await GetAuthModeAsync(personId);
+            _logger?.LogInformation(
+                $"\nПолучен FaceId: {e.Message.FaceId} " +
+                $"\nДля него PersonId: {personId} " +
+                $"\nУ него режим авторизации: {authMode}");
 
             var request = _requests.GetOrAdd(passPointId, new PassRequestWithPersonId()
             {
                 FaceIdPersonId = personId,
-                AuthMode = passMode,
+                AuthMode = authMode,
             });
             request.FaceId = e.Message.FaceId;
             _ = RequestProcessing(request, passPointId);
@@ -84,21 +87,26 @@ internal class ListenersAggregator : IInputAggregator
             _logger?.LogError(ex.Message);
         }
     }
-    private async void OnControllerListeneDataReceived(object? sender, ReceivedRfidEventArgs e)
+    private async void OnControllerListeneMessageReceived(object? sender, ReceivedRfidEventArgs e)
     {
         try
         {
             var message = RfidMessage.Parse(e.Data);
+            _logger?.LogInformation($"Получен RFID: {message.RfidString}");
             int passPointId = GetPassPointId(e.RemoteIp.Address.ToString(), message.Channel);
-            int personId = await GetPersonIdAsync(e.Rfid);
+            _logger?.LogInformation($"Получен id точкит прохода: {passPointId}");
+            int personId = await GetPersonIdAsync(message.RfidString);
+            _logger?.LogInformation($"Получен PersonId: {personId}");
             var authMode = await GetAuthModeAsync(personId);
+            _logger?.LogInformation($"Получен режим авторизации: {authMode}");
+
 
             var request = _requests.GetOrAdd(passPointId, new PassRequestWithPersonId()
             {
                 RfidPersonId = personId,
                 AuthMode = authMode,
             });
-            request.Rfid = e.ToString()!;
+            request.Rfid = message.RfidString;
             request.Data = e.Data;
             request.RemoteAddress = e.RemoteIp.Address.ToString();
             request.RemotePort = e.RemoteIp.Port;

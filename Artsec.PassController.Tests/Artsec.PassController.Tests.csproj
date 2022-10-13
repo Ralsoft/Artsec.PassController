@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Artsec.FaceIdIntegration\Artsec.PassController.csproj" />
     <ProjectReference Include="..\Artsec.PassController.Dal\Artsec.PassController.Dal.csproj" />
   </ItemGroup>
 

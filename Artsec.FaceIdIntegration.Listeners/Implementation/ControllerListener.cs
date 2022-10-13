@@ -21,11 +21,9 @@ public class ControllerListener
 
         _udpClient = new UdpClient(_config.Port);
         _port = ((IPEndPoint)_udpClient.Client.LocalEndPoint).Port;
-        DataReceived = OnDataReceived;
-
     }
 
-    public event EventHandler<ReceivedRfidEventArgs> DataReceived;
+    public event EventHandler<ReceivedRfidEventArgs> MessageReceived;
 
     public string SourceName => "Contoller";
     public string SourceType => "UDP";
@@ -44,15 +42,6 @@ public class ControllerListener
         _isReceiving = false;
     }
 
-    private void OnDataReceived(object? sender, ReceivedRfidEventArgs e)
-    {
-        _logger?.LogInformation(string.Join(" ", e.RemoteIp));
-        _logger?.LogInformation(string.Join(" ", e.Data));
-
-        // TODO: 
-    }
-
-
     public async Task ReceiveMessage()
     {
         while (_isReceiving)
@@ -64,7 +53,7 @@ public class ControllerListener
                 byte[] data = result.Buffer;
                 string message = BitConverter.ToString(data);
                 _logger?.LogInformation($"Receiver get message: {message} from {result.RemoteEndPoint}");
-                DataReceived?.Invoke(this, new ReceivedRfidEventArgs(data, result.RemoteEndPoint));
+                MessageReceived?.Invoke(this, new ReceivedRfidEventArgs(data, result.RemoteEndPoint, null));
 
             }
             catch (Exception ex)

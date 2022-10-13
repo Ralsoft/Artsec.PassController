@@ -1,5 +1,6 @@
 ﻿using Artsec.PassController.Dal;
 using Artsec.PassController.Domain.Enums;
+using Artsec.PassController.Domain.Exceptions;
 using Artsec.PassController.Services.Interfaces;
 
 namespace Artsec.PassController.Services;
@@ -15,6 +16,9 @@ internal class PersonAuthModeService : IPersonAuthModeService
     public async Task<AuthMode> GetPersonAuthModeAsync(int personId)
     {
         var people = await _dbContext.People.GetAsync();
-        return (AuthMode)people.First(p => p.PeopleId == personId).AuthMode;
+        var person = people.FirstOrDefault(p => p.PeopleId == personId);
+        if (person is null)
+            throw new AuthModeNotFoundExeption(personId);
+        return (AuthMode)person.AuthMode;
     }
 }

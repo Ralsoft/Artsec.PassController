@@ -80,12 +80,12 @@ namespace Artsec.PassController
 
         private void OnInputReceived(object sender, PassRequestWithPersonId request)
         {
-            _logger.LogInformation(
+            _logger.LogInformation("Начата обработка запроса\n" + 
                 $"FaceId: {request.FaceId}\n" +
                 $"Rfid: {request.Rfid}\n" +
                 $"PersonId: {request.PersonId}\n" +
                 $"CreationTime: {request.CreationTime}\n" +
-                $"PassMode: {request.AuthMode}");
+                $"AuthMode: {request.AuthMode}");
             try
             {
                 _ = _passRequestPipeline.PushAsync(request);

@@ -8,10 +8,12 @@ namespace Artsec.PassController.Pipelines;
 internal class ValidationMiddleware : IPipelineMiddleware<PassRequestWithPersonId, PassRequestWithValidation>
 {
     private readonly IValidationService _validationService;
+    private readonly ILogger<ValidationMiddleware> _logger;
 
-    public ValidationMiddleware(IValidationService validationService)
+    public ValidationMiddleware(IValidationService validationService, ILogger<ValidationMiddleware> logger)
     {
         _validationService = validationService;
+        _logger = logger;
     }
 
     public async Task<PassRequestWithValidation> InvokeAsync(PassRequestWithPersonId payload)
@@ -27,6 +29,7 @@ internal class ValidationMiddleware : IPipelineMiddleware<PassRequestWithPersonI
         int validCode = await _validationService.ValidatePassAsync(payload);
         result.IsValid = validCode == 0;
         result.ValidCode = validCode;
+        _logger?.LogInformation($"Получен код валидации: {result.ValidCode}");
 
         return result;
     }

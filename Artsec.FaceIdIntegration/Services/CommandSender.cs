@@ -24,6 +24,16 @@ internal class CommandSender : ICommandSender
         var sendMessage = packager.Pack();
         await SendCommandAsync(sendMessage, remoteAddress, remotePort);
     }
+    public async Task SendRejectPassAsync(byte[] data, string? remoteAddress, int remotePort)
+    {
+        var message = RfidMessage.Parse(data);
+        var packager = new ArtonitSePackager(ArtonitSeCommand.Answer);
+        packager.AddArgs(message.Body.Take(4).ToArray());
+        packager.AddArg(message.Channel);
+        packager.AddArg(0x01);
+        var sendMessage = packager.Pack();
+        await SendCommandAsync(sendMessage, remoteAddress, remotePort);
+    }
 
     public async Task SendCommandAsync(ControllerCommand command, string? remoteAddress, int remotePort)
     {

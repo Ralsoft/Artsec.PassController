@@ -23,17 +23,18 @@ public static class RfidHelper
 {
     public static byte[] ConvertMessageBodyToRfid(byte[] data)
     {
-        if (data.Length != 4)
+        if (data.Length < 4)
         {
-            throw new ArgumentException("RFID length must equals 4");
+            throw new ArgumentException("Body length must be more then 4");
         }
-        var newData = new byte[data.Length + 1];
-        for (int i = 0; i < data.Length; i++)
+
+        var newData = new byte[5];
+        for (int i = 0; i < 4; i++)
         {
             var biteArr = new BitArray(new byte[] { data[i] });
             newData[i] = ConvertToByte(biteArr.Reverse());
         }
-        newData[^1] = 0x1A;
+        newData[4] = 0x1A;
         return newData;
     }
     public static string RfidToString(byte[] rfid, string delimiter = "")

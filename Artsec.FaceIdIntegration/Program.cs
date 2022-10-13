@@ -43,4 +43,5 @@ try
 catch (Exception ex)
 {
     Console.WriteLine("Error while starting. " + ex.Message);
+    Console.ReadLine();
 }

@@ -7,11 +7,16 @@ namespace Artsec.PassController.Pipelines;
 
 public class PassRequestPipeline : Pipeline<PassRequestWithPersonId>
 {
+	private readonly ILogger<PassRequestPipeline> _logger;
 	public PassRequestPipeline(IServiceProvider serviceProvider)
 	{
 		this
-		.AddMiddleware(new ValidationMiddleware(serviceProvider.GetRequiredService<IValidationService>()))
-		.AddMiddleware(new CommandSenderMiddleware(serviceProvider.GetRequiredService<ICommandSender>()))
-		.AddMiddleware(new RequestsLoggingMiddleware(serviceProvider.GetRequiredService<IRequestsLoggingService>()));
-	}
+		.AddMiddleware(new ValidationMiddleware(serviceProvider.GetRequiredService<IValidationService>(),
+                                                   serviceProvider.GetRequiredService<ILogger<ValidationMiddleware>>()))
+        .AddFunc(x => { _logger?.LogInformation($"Получен код валидации: {x.ValidCode}"); return x; })
+		.AddMiddleware(new CommandSenderMiddleware(serviceProvider.GetRequiredService<ICommandSender>(),
+												   serviceProvider.GetRequiredService<ILogger<CommandSenderMiddleware>>()))
+        .AddMiddleware(new RequestsLoggingMiddleware(serviceProvider.GetRequiredService<IRequestsLoggingService>()));
+
+    }
 }
