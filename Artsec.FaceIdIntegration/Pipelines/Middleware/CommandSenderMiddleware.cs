@@ -18,31 +18,65 @@ internal class CommandSenderMiddleware : IPipelineMiddleware<PassRequestWithVali
 
     public async Task<PassRequestWithValidation> InvokeAsync(PassRequestWithValidation payload)
     {
-        if (payload.IsValid)
+        try
         {
-            if (payload.AuthMode == AuthMode.RequaredFaceId ||
-               (payload.AuthMode == AuthMode.AnyIdentifier && payload.FaceId != null))
+            if (payload.IsValid)
             {
-                await _commandSender.SendOpenDoorAsync(payload.Channel, payload.RemoteAddress, payload.RemotePort);
-                _logger?.LogInformation($"Для FaceId = {payload.FaceId} отправлена команда на открытие двери");
+                switch (payload.AuthMode)
+                {
+                    case AuthMode.None:
+                        _logger?.LogWarning($"Не указан тип авторизации. Команда не отправлена");
+                        break;
+                    case AuthMode.RequaredRfid:
+                        await _commandSender.SendAllowPassAsync(payload.Data, payload.RemoteAddress, payload.RemotePort);
+                        _logger?.LogInformation($"Для RFID = {payload.Rfid} отправлена команда на разрешение прохода");
+                        break;
+                    case AuthMode.RequaredRfidAndFaceId:
+                        await _commandSender.SendAllowPassAsync(payload.Data, payload.RemoteAddress, payload.RemotePort);
+                        _logger?.LogInformation($"Для RFID = {payload.Rfid} отправлена команда на разрешение прохода");
+                        break;
+                    case AuthMode.RequaredRfidAndAnyFaceId:
+                        await _commandSender.SendAllowPassAsync(payload.Data, payload.RemoteAddress, payload.RemotePort);
+                        _logger?.LogInformation($"Для RFID = {payload.Rfid} отправлена команда на разрешение прохода");
+                        break;
+                    case AuthMode.RequaredFaceId:
+                        await _commandSender.SendOpenDoorAsync(payload.Channel, payload.RemoteAddress, payload.RemotePort);
+                        _logger?.LogInformation($"Для FaceId = {payload.FaceId} отправлена команда на открытие двери");
+                        break;
+                    case AuthMode.AnyIdentifier:
+                        if (payload.Rfid is not null)
+                        {
+                            await _commandSender.SendAllowPassAsync(payload.Data, payload.RemoteAddress, payload.RemotePort);
+                            _logger?.LogInformation($"Для RFID = {payload.Rfid} отправлена команда на разрешение прохода");
+                        }
+                        else
+                        {
+                            await _commandSender.SendOpenDoorAsync(payload.Channel, payload.RemoteAddress, payload.RemotePort);
+                            _logger?.LogInformation($"Для FaceId = {payload.FaceId} отправлена команда на открытие двери");
+                        }
+                        break;
+                    default:
+                        _logger?.LogWarning($"Неизвестный тип авторизации. Команда не отправлена");
+                        break;
+                }
             }
             else
             {
-                await _commandSender.SendAllowPassAsync(payload.Data, payload.RemoteAddress, payload.RemotePort);
-                _logger?.LogInformation($"Для RFID = {payload.Rfid} отправлена команда на разрешение прохода");
+                if (payload.Rfid is not null)
+                {
+                    await _commandSender.SendRejectPassAsync(payload.Data, payload.RemoteAddress, payload.RemotePort);
+                    _logger?.LogInformation($"Валидация не прошла. Для RFID = {payload.Rfid} отправлена команда \"Запрет прохода\"");
+                }
+                else
+                {
+                    _logger?.LogInformation($"Валидация не прошла. Команда не отправлена");
+                }
             }
         }
-        else
+        catch (Exception ex)
         {
-            if (payload.Rfid is not null)
-            {
-                await _commandSender.SendRejectPassAsync(payload.Data, payload.RemoteAddress, payload.RemotePort);
-                _logger?.LogInformation($"Валидация не прошла. Для RFID = {payload.Rfid} отправлена команда \"Запрет прохода\"");
-            }
-            else
-            {
-                _logger?.LogInformation($"Валидация не прошла. Команда не отправлена");
-            }
+            _logger?.LogCritical(ex.Message);
+            _logger?.LogCritical(ex.StackTrace);
         }
         return payload;
     }

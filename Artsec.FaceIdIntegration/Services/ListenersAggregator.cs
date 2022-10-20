@@ -1,4 +1,5 @@
 ﻿using Artsec.PassController.Domain.Enums;
+using Artsec.PassController.Domain.Exceptions;
 using Artsec.PassController.Domain.Messages;
 using Artsec.PassController.Domain.Requests;
 using Artsec.PassController.Listeners.Events;
@@ -41,6 +42,7 @@ internal class ListenersAggregator : IInputAggregator
 
     private async Task RequestProcessing(PassRequestWithPersonId request, int key)
     {
+        request.DeviceId = key;
         if (request.IsReadyToProcessing())
         {
             SendAndRemove(key);
@@ -69,17 +71,24 @@ internal class ListenersAggregator : IInputAggregator
             int passPointId = GetPassPointIdForFaceId(int.Parse(e.Message.CamId));
             int personId = await GetPersonIdAsync(e.Message.FaceId);
             var authMode = await GetAuthModeAsync(personId);
+            var controller = _passPointService.GetControllerByDeviceId(passPointId);
             _logger?.LogInformation(
                 $"\nПолучен FaceId: {e.Message.FaceId} " +
                 $"\nДля него PersonId: {personId} " +
                 $"\nУ него режим авторизации: {authMode}");
 
-            var request = _requests.GetOrAdd(passPointId, new PassRequestWithPersonId()
+            var baseRequset = new PassRequest()
+            {
+                FaceId = e.Message.FaceId,
+                RemoteAddress = controller.Ip,
+                RemotePort = controller.Port,
+                Channel = controller.Channels.First(x=>x.Value == passPointId).Value,
+            };
+            var request = _requests.GetOrAdd(passPointId, new PassRequestWithPersonId(baseRequset)
             {
                 FaceIdPersonId = personId,
                 AuthMode = authMode,
             });
-            request.FaceId = e.Message.FaceId;
             _ = RequestProcessing(request, passPointId);
         }
         catch (Exception ex)
@@ -100,22 +109,46 @@ internal class ListenersAggregator : IInputAggregator
             var authMode = await GetAuthModeAsync(personId);
             _logger?.LogInformation($"Получен режим авторизации: {authMode}");
 
+            var baseRequset = new PassRequest()
+            {
+                Rfid = message.RfidString,
+                Data = e.Data,
+                RemoteAddress = e.RemoteIp.Address.ToString(),
+                RemotePort = e.RemoteIp.Port,
+                Channel = message.Channel,
+            };
 
-            var request = _requests.GetOrAdd(passPointId, new PassRequestWithPersonId()
+            var request = _requests.GetOrAdd(passPointId, new PassRequestWithPersonId(baseRequset)
             {
                 RfidPersonId = personId,
                 AuthMode = authMode,
             });
-            request.Rfid = message.RfidString;
-            request.Data = e.Data;
-            request.RemoteAddress = e.RemoteIp.Address.ToString();
-            request.RemotePort = e.RemoteIp.Port;
-            request.Channel = message.Channel;
             _ = RequestProcessing(request, passPointId);
         }
         catch (Exception ex)
         {
             _logger?.LogError(ex.Message);
+
+            if (ex is PersonNotFoundException || ex is AuthModeNotFoundExeption)
+            {
+                var message = RfidMessage.Parse(e.Data);
+                int passPointId = GetPassPointId(e.RemoteIp.Address.ToString(), message.Channel);
+                var baseRequset = new PassRequest()
+                {
+                    Rfid = message.RfidString,
+                    Data = e.Data,
+                    RemoteAddress = e.RemoteIp.Address.ToString(),
+                    RemotePort = e.RemoteIp.Port,
+                    Channel = message.Channel,
+                };
+
+                var request = _requests.GetOrAdd(passPointId, new PassRequestWithPersonId(baseRequset)
+                {
+                    RfidPersonId = 0,
+                    AuthMode = AuthMode.None,
+                });
+                _ = RequestProcessing(request, passPointId);
+            }
         }
     }
 

@@ -41,6 +41,7 @@ internal class CommandSender : ICommandSender
     }
     public async Task SendCommandAsync(byte[] data, string? remoteAddress, int remotePort)
     {
+        _logger.LogInformation($"Sending data with length: {data.Length} to {remoteAddress}:{remotePort}");
         try
         {
             using var udpClient = new UdpClient();

@@ -1,5 +1,7 @@
 using Artsec.PassController;
 using Artsec.PassController.Extensions;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http;
 using System.Text;
 
 try
@@ -30,6 +32,8 @@ try
             //IConfiguration configuration = hostContext.Configuration;
             //WorkerOptions options = configuration.GetSection("WorkerOptions").Get<WorkerOptions>();
             services.AddHttpClient();
+            services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
+
             services.AddListeners();
             services.AddServices();
             services.AddPipelines();

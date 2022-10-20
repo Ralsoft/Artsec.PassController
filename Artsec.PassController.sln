@@ -13,15 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Artsec.PassController.Domai
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Artsec.Dal", "Artsec.Dal\Artsec.Dal.csproj", "{DF962F18-87D4-4A68-846D-7B571F27F40E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipeLight", "..\..\PipeLight\src\PipeLight\PipeLight.csproj", "{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Artsec.PassController.ConsoleTest", "Artsec.PassController.ConsoleTest\Artsec.PassController.ConsoleTest.csproj", "{8C777214-AB9F-43AC-A1BA-5962B7C8D19C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Artsec.PassController.Dal", "Artsec.PassController.Dal\Artsec.PassController.Dal.csproj", "{9FBB61DC-4239-40E6-8CDA-3D22D574D856}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Artsec.PassController.Dal", "Artsec.PassController.Dal\Artsec.PassController.Dal.csproj", "{9FBB61DC-4239-40E6-8CDA-3D22D574D856}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7DCCEE15-9299-4DA0-BDD4-81C84F3BBF4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Artsec.PassController.Tests", "Artsec.PassController.Tests\Artsec.PassController.Tests.csproj", "{6561F246-E424-418A-BF36-09297813BFB9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Artsec.PassController.Tests", "Artsec.PassController.Tests\Artsec.PassController.Tests.csproj", "{6561F246-E424-418A-BF36-09297813BFB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +43,6 @@ Global
 		{DF962F18-87D4-4A68-846D-7B571F27F40E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF962F18-87D4-4A68-846D-7B571F27F40E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF962F18-87D4-4A68-846D-7B571F27F40E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{09D4B60D-CBE0-4D4B-AFFF-76535547F4A8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8C777214-AB9F-43AC-A1BA-5962B7C8D19C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8C777214-AB9F-43AC-A1BA-5962B7C8D19C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C777214-AB9F-43AC-A1BA-5962B7C8D19C}.Release|Any CPU.ActiveCfg = Release|Any CPU

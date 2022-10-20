@@ -13,7 +13,7 @@ public class PassRequest
     public string? Rfid { get; set; }
     public string? FaceId { get; set; }
     public AuthMode AuthMode { get; set; }
-    public DateTime CreationTime { get; } = DateTime.Now;
+    public DateTime CreationTime { get; set; } = DateTime.Now;
     public int Channel { get; set; }
     public string? RemoteAddress { get; set; }
     public int RemotePort { get; set; }
@@ -25,18 +25,22 @@ public class PassRequest
             return true;
 
 
-        Func<bool> validate = () => false;
-        if (AuthMode == AuthMode.RequaredRfid)
-            validate = () => Rfid != null;
-        else if (AuthMode == AuthMode.RequaredRfidAndFaceId)
-            validate = () => Rfid != null && FaceId != null;
-        else if (AuthMode == AuthMode.RequaredRfidAndAnyFaceId)
-            validate = () => Rfid != null && FaceId != null;
-        else if (AuthMode == AuthMode.RequaredFaceId)
-            validate = () => FaceId != null;
-        else if (AuthMode == AuthMode.AnyIdentifier)
-            validate = () => Rfid != null || FaceId != null;
-
-        return validate.Invoke();
+        switch (AuthMode)
+        {
+            case AuthMode.None:
+                return true;
+            case AuthMode.RequaredRfid:
+                return Rfid != null;
+            case AuthMode.RequaredRfidAndFaceId:
+                return Rfid != null && FaceId != null;
+            case AuthMode.RequaredRfidAndAnyFaceId:
+                return Rfid != null && FaceId != null;
+            case AuthMode.RequaredFaceId:
+                return FaceId != null;
+            case AuthMode.AnyIdentifier:
+                return Rfid != null || FaceId != null;
+            default:
+                return false;
+        }
     }
 }

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Artsec.PassController.Domain.Requests;
+﻿namespace Artsec.PassController.Domain.Requests;
 
 public class PassRequestWithValidation : PassRequestWithPersonId
 {
+    public PassRequestWithValidation(PassRequestWithPersonId request) : base(request)
+    {
+        RfidPersonId = request.RfidPersonId;
+        FaceIdPersonId = request.FaceIdPersonId;
+    }
     public bool IsValid { get; set; }
     public int ValidCode { get; set; }
 }

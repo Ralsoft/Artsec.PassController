@@ -19,15 +19,9 @@ internal class ValidationMiddleware : IPipelineMiddleware<PassRequestWithPersonI
     public async Task<PassRequestWithValidation> InvokeAsync(PassRequestWithPersonId payload)
     {
 
-        var result = new PassRequestWithValidation()
-        {
-            FaceId = payload.FaceId,
-            AuthMode = payload.AuthMode,
-            RfidPersonId = payload.RfidPersonId,
-            Rfid = payload.Rfid,
-        };
+        var result = new PassRequestWithValidation(payload);
         int validCode = await _validationService.ValidatePassAsync(payload);
-        result.IsValid = validCode == 0;
+        result.IsValid = validCode == 50;
         result.ValidCode = validCode;
         _logger?.LogInformation($"Получен код валидации: {result.ValidCode}");
 

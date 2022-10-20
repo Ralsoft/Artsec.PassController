@@ -84,6 +84,7 @@ namespace Artsec.PassController
                 $"FaceId: {request.FaceId}\n" +
                 $"Rfid: {request.Rfid}\n" +
                 $"PersonId: {request.PersonId}\n" +
+                $"DeviceId: {request.DeviceId}\n" +
                 $"CreationTime: {request.CreationTime}\n" +
                 $"AuthMode: {request.AuthMode}");
             try

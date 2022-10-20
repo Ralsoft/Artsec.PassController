@@ -39,7 +39,7 @@ public static class RfidHelper
     }
     public static string RfidToString(byte[] rfid, string delimiter = "")
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         foreach (var hex in rfid)
         {
             if (hex < 16)

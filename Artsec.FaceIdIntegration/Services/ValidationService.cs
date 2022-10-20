@@ -22,7 +22,7 @@ internal class ValidationService : IValidationService
         switch (payload.AuthMode)
         {
             case AuthMode.None:
-                return -1;
+                return 0;
 
             case AuthMode.RequaredRfid:
                 return await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.Rfid);
@@ -38,21 +38,22 @@ internal class ValidationService : IValidationService
                     return 146;
                 rfidValidation = await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.Rfid);
                 faceValidation = await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.FaceId);
-                if (rfidValidation == 0 || faceValidation == 0)
-                    return 0;
+                if (rfidValidation == 50 || faceValidation == 50)
+                    return 50;
                 else
-                    return rfidValidation == 0 ? rfidValidation : faceValidation;
+                    return rfidValidation != 0 ? rfidValidation : faceValidation;
 
             case AuthMode.RequaredFaceId:
                 return await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.FaceId);
 
             case AuthMode.AnyIdentifier:
+
                 rfidValidation = await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.Rfid);
-                if (rfidValidation == 0)
-                    return 0;
+                if (rfidValidation == 50)
+                    return 50;
                 faceValidation = await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.FaceId);
-                if (faceValidation == 0)
-                    return 0;
+                if (faceValidation == 50)
+                    return 50;
                 return rfidValidation;
 
             default:
