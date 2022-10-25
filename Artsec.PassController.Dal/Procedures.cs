@@ -1,16 +1,11 @@
 ﻿using Dapper;
+using FirebirdSql.Data.FirebirdClient;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 
 namespace Artsec.PassController.Dal;
 
-public class Dto
-{
-    [Column("EVENT_TYPE")]
-    public int EVENT_TYPE { get; set; }
-    [Column("ID_PEP")]
-    public int ID_PEP { get; set; }
-}
 public class Procedures
 {
     private readonly IConnectionProvider _connectionProvider;
@@ -22,6 +17,8 @@ public class Procedures
 
     public async Task<int> ValidatePass(int deviceId, string identifier)
     {
+        if (identifier.Length > 12)
+            throw new ValidationException($"Identifier max length is 12");
         using var connection = _connectionProvider.CreateConnection();
         await connection.OpenAsync();
 
@@ -35,5 +32,36 @@ public class Procedures
         var result = await command.ExecuteScalarAsync();
         return (int)result;
     }
+    public async Task<int> InsertDeviceEventAsync(int eventCode, int controllerId, string cardNumber, DateTime time)
+    {
+        using var connection = _connectionProvider.CreateConnection();
+        await connection.OpenAsync();
+        await using var cmd = new FbCommand("DEVICEEVENTS_INSERT", connection);
+        cmd.CommandType = CommandType.StoredProcedure;
 
+        cmd.Parameters.Add("@ID_DB", 1);
+        cmd.Parameters.Add("@ID_EVENTTYPE", (int)eventCode);
+        cmd.Parameters.Add("@ID_CTRL", controllerId);
+
+        var param = new FbParameter("@ID_READER", FbDbType.Integer)
+        {
+            Value = 0
+        };
+        cmd.Parameters.Add(param);
+
+        cmd.Parameters.Add("@NOTE", cardNumber);
+        cmd.Parameters.Add("@TIME", time);
+        cmd.Parameters.Add("@ID_VIDEO", null);
+        cmd.Parameters.Add("@ID_USER", null);
+        cmd.Parameters.Add("@ESS1", null);
+        cmd.Parameters.Add("@ESS2", null);
+        cmd.Parameters.Add("@IDSOURCE", 1);
+        cmd.Parameters.Add("@IDSERVERTS", 1);
+
+        var responce = await cmd.ExecuteScalarAsync();
+        if (int.TryParse(responce?.ToString(), out int result))
+            return result;
+
+        return -1;
+    }
 }

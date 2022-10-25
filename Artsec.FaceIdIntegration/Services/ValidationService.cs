@@ -17,8 +17,8 @@ internal class ValidationService : IValidationService
     }
     public async Task<int> ValidatePassAsync(PassRequestWithPersonId payload)
     {
-        int rfidValidation;
-        int faceValidation;
+        int rfidValidation = 0;
+        int faceValidation = 0;
         switch (payload.AuthMode)
         {
             case AuthMode.None:
@@ -48,10 +48,12 @@ internal class ValidationService : IValidationService
 
             case AuthMode.AnyIdentifier:
 
-                rfidValidation = await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.Rfid);
+                if (payload.Rfid is not null)
+                    rfidValidation = await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.Rfid);
                 if (rfidValidation == 50)
                     return 50;
-                faceValidation = await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.FaceId);
+                if (payload.FaceId is not null)
+                    faceValidation = await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.FaceId);
                 if (faceValidation == 50)
                     return 50;
                 return rfidValidation;

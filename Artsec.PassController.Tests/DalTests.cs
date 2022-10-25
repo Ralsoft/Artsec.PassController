@@ -37,4 +37,14 @@ public class DalTests
 
         Assert.NotNull(result);
     }
+    [Fact]
+    public async Task DeviceTest()
+    {
+        var connectionProvider = new ConnectionProvider(ConnectionString);
+        var dbContext = new PassControllerDbContext(connectionProvider);
+
+        var result = await dbContext.Devices.GetById(5);
+
+        Assert.NotNull(result);
+    }
 }

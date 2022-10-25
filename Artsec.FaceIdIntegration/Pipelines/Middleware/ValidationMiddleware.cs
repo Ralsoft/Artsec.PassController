@@ -23,7 +23,6 @@ internal class ValidationMiddleware : IPipelineMiddleware<PassRequestWithPersonI
         int validCode = await _validationService.ValidatePassAsync(payload);
         result.IsValid = validCode == 50;
         result.ValidCode = validCode;
-        _logger?.LogInformation($"Получен код валидации: {result.ValidCode}");
 
         return result;
     }
