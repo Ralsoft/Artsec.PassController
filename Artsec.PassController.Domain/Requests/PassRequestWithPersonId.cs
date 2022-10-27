@@ -13,6 +13,7 @@ public class PassRequestWithPersonId : PassRequest
         RemoteAddress = request.RemoteAddress;
         RemotePort = request.RemotePort;
         Data = request.Data;
+        CamId = request.CamId;
     }
     public int PersonId => RfidPersonId != 0 ? RfidPersonId : FaceIdPersonId;  
     public int RfidPersonId { get; set; }
