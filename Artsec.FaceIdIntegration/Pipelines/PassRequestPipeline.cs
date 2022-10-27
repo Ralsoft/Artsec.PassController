@@ -17,7 +17,7 @@ public class PassRequestPipeline : Pipeline<PassRequestWithPersonId>
         .AddFunc(x => { _logger?.LogInformation($"Получен код валидации: {x.ValidCode}"); return x; })
 		.AddMiddleware(new CommandSenderMiddleware(serviceProvider.GetRequiredService<ICommandSender>(),
 												   serviceProvider.GetRequiredService<ILogger<CommandSenderMiddleware>>()))
-        .AddMiddleware(new RequestsLoggingMiddleware(serviceProvider.GetRequiredService<IRequestsLoggingService>()));
-
+        .AddMiddleware(new RequestsLoggingMiddleware(serviceProvider.GetRequiredService<IRequestsLoggingService>()))
+        .AddFunc(r => { _logger?.LogInformation($"Время выполнения запроса: {DateTime.Now - r.CreationTime}"); return r; });
     }
 }
