@@ -74,6 +74,7 @@ internal class ListenersAggregator : IInputAggregator
             var controller = _passPointService.GetControllerByDeviceId(passPointId);
             _logger?.LogInformation(
                 $"\nПолучен FaceId: {e.Message.FaceId} " +
+                $"\nот  CamID: {e.Message.CamId} " +
                 $"\nДля него PersonId: {personId} " +
                 $"\nУ него режим авторизации: {authMode}");
 
