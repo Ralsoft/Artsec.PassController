@@ -2,7 +2,6 @@
 using Artsec.PassController.Domain.Messages;
 using Artsec.PassController.Services.Interfaces;
 using System.Net.Sockets;
-using System.Threading.Channels;
 
 namespace Artsec.PassController.Services;
 
@@ -58,6 +57,16 @@ internal class CommandSender : ICommandSender
         byte[] data;
         if (channel == 0)
             data = new byte[]
+                {
+                0x02,
+                0x1F,
+                0x01,
+                0x03,
+                0xB9,
+                0x21,
+                };
+        else
+            data = new byte[]
             {
                 0x02,
                 0x1F,
@@ -65,16 +74,6 @@ internal class CommandSender : ICommandSender
                 0x03,
                 0x61,
                 0x38,
-            };
-        else
-            data = new byte[]
-            {
-                0x02,
-                0x1F,
-                0x01,
-                0x03,
-                0xB9,
-                0x21,
             };
         await SendCommandAsync(data, remoteAddress, remotePort);
     }
