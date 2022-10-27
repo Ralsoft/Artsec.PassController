@@ -68,13 +68,14 @@ internal class ListenersAggregator : IInputAggregator
         {
             if (e.Message.SrcAction != "FIND_PERSON")
                 return;
+            _logger?.LogInformation(
+                $"\nПолучен FaceId: {e.Message.FaceId} " +
+                $"\nОт  CamId: {e.Message.CamId} ");
             int passPointId = GetPassPointIdForFaceId(int.Parse(e.Message.CamId));
             int personId = await GetPersonIdAsync(e.Message.FaceId);
             var authMode = await GetAuthModeAsync(personId);
             var controller = _passPointService.GetControllerByDeviceId(passPointId);
             _logger?.LogInformation(
-                $"\nПолучен FaceId: {e.Message.FaceId} " +
-                $"\nОт  CamId: {e.Message.CamId} " +
                 $"\nДля него PersonId: {personId} " +
                 $"\nУ него режим авторизации: {authMode}");
 
