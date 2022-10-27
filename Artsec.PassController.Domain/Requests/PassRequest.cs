@@ -10,6 +10,7 @@ namespace Artsec.PassController.Domain.Requests;
 public class PassRequest
 {
     public int DeviceId { get; set; }
+    public string? CamId { get; set; }
     public string? Rfid { get; set; }
     public string? FaceId { get; set; }
     public AuthMode AuthMode { get; set; }

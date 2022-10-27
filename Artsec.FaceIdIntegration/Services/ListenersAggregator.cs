@@ -74,7 +74,7 @@ internal class ListenersAggregator : IInputAggregator
             var controller = _passPointService.GetControllerByDeviceId(passPointId);
             _logger?.LogInformation(
                 $"\nПолучен FaceId: {e.Message.FaceId} " +
-                $"\nот  CamID: {e.Message.CamId} " +
+                $"\nОт  CamId: {e.Message.CamId} " +
                 $"\nДля него PersonId: {personId} " +
                 $"\nУ него режим авторизации: {authMode}");
 
@@ -83,7 +83,8 @@ internal class ListenersAggregator : IInputAggregator
                 FaceId = e.Message.FaceId,
                 RemoteAddress = controller.Ip,
                 RemotePort = controller.Port,
-                Channel = controller.Channels.First(x=>x.Value == passPointId).Value,
+                Channel = controller.Channels.First(x => x.Value == passPointId).Value,
+                CamId = e.Message.CamId,
             };
             var request = _requests.GetOrAdd(passPointId, new PassRequestWithPersonId(baseRequset)
             {
