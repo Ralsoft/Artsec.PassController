@@ -2,6 +2,7 @@
 using Artsec.PassController.Listeners.Configurations;
 using Artsec.PassController.Listeners.Events;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -12,7 +13,7 @@ namespace Artsec.PassController.Listeners.Implementation;
 public class FaceIdListener
 {
     private readonly ILogger<FaceIdListener> _logger;
-    private readonly FaceIdListenerConfiguration _config;
+    private readonly IOptions<FaceIdListenerConfiguration> _options;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly HttpClient _httpClient;
     private bool _isReceiving;
@@ -21,17 +22,17 @@ public class FaceIdListener
     public string SourceName => "FaceId";
     public string SourceType => "HTTP";
 
-    public FaceIdListener(ILogger<FaceIdListener> logger, FaceIdListenerConfiguration config, IHttpClientFactory httpClientFactory)
+    public FaceIdListener(ILogger<FaceIdListener> logger, IOptions<FaceIdListenerConfiguration> options, IHttpClientFactory httpClientFactory)
     {
         _logger = logger;
-        _config = config;
+        _options = options;
         _httpClientFactory = httpClientFactory;
         _httpClient = new HttpClient();
 
     }
     public async Task ReceiveMessage()
     {
-        string url = _config.Url;
+        string url = _options.Value.Url;
         var regex = new Regex(@"\{(.|\s)*\}");
         var httpClient = _httpClientFactory.CreateClient();
 
@@ -61,6 +62,7 @@ public class FaceIdListener
             catch (Exception ex)
             {
                 _logger?.LogError($"Error: {ex.Message}");
+                await Task.Delay(5000);
             }
         }
     }

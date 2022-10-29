@@ -3,11 +3,8 @@ using Artsec.PassController.Listeners.Configurations;
 
 namespace Artsec.PassController.Configs;
 
-public class WorkerConfigurations
+public class ControllersConfigurations
 {
-    public string ConnectionString { get; set; } = string.Empty;
     public Dictionary<string, Controller> Controllers { get; set; } = new();
     public Dictionary<string, int> CamIdToDevId { get; set; } = new();
-    public ControllerListenerConfiguration ControllerListenerConfiguration { get; set; } = new();
-    public FaceIdListenerConfiguration FaceIdListenerConfiguration { get; set; } = new();
 }

@@ -1,5 +1,7 @@
 using Artsec.PassController;
+using Artsec.PassController.Configs;
 using Artsec.PassController.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
 using System.Text;
@@ -24,8 +26,14 @@ try
                 retainedFileCountLimit: retainedFileCountLimit,
                 outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss.fff}\t-\t[{Level:u3}] {Message}{NewLine}{Exception}");
         })
+        .ConfigureAppConfiguration((hostingContext, config) =>
+        {
+            config.AddJsonFile("connectionsSettings.json", optional: false, reloadOnChange: false);
+            config.AddJsonFile("controllersSettings.json", optional: false, reloadOnChange: false);
+        })
         .ConfigureServices((hostContext, services) =>
         {
+            services.AddConfigurations(hostContext.Configuration);
             services.AddHostedService<Worker>();
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -38,7 +46,6 @@ try
             services.AddServices();
             services.AddPipelines();
             services.AddDal(hostContext.Configuration);
-            services.AddConfigurations(hostContext.Configuration);
 
         })
         .Build();

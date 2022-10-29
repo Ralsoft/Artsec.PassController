@@ -1,0 +1,20 @@
+{
+  "ControllersConfigurations": {
+    "Controllers": {
+      "127.0.0.1": {
+        "Name": "Тест новой интеграции ITV",
+        "Ip": "127.0.0.1",
+        "Port": 8192,
+        "IsActive": true,
+        "Channels": {
+          "0": 846,
+          "1": 847
+        }
+      }
+    },
+    "CamIdToDevId": {
+      "0": 165,
+      "1": 166
+    }
+  }
+}

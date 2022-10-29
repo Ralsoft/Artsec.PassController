@@ -4,6 +4,7 @@ using Artsec.PassController.Domain.Requests;
 using Artsec.PassController.Listeners.Implementation;
 using Artsec.PassController.Pipelines;
 using Artsec.PassController.Services.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace Artsec.PassController
 {
@@ -12,17 +13,18 @@ namespace Artsec.PassController
         private readonly ILogger<Worker> _logger;
         private readonly IInputAggregator _inputAggregator;
         private readonly PassRequestPipeline _passRequestPipeline;
-        private readonly WorkerConfigurations _configs;
+        private readonly IOptions<ControllersConfigurations> _options;
         private readonly ControllerListener _controllerListener;
         private readonly ICommandSender _commandSender;
 
-        public Worker(ILogger<Worker> logger, IInputAggregator inputAggregator, PassRequestPipeline passRequestPipeline, WorkerConfigurations configs,
+        public Worker(ILogger<Worker> logger, IInputAggregator inputAggregator, 
+            PassRequestPipeline passRequestPipeline, IOptions<ControllersConfigurations> options,
             ControllerListener controllerListener, ICommandSender commandSender)
         {
             _logger = logger;
             _inputAggregator = inputAggregator;
             _passRequestPipeline = passRequestPipeline;
-            _configs = configs;
+            _options = options;
             _controllerListener = controllerListener;
             _commandSender = commandSender;
         }
@@ -37,7 +39,7 @@ namespace Artsec.PassController
         {
             _inputAggregator.InputReceived += OnInputReceived!;
 
-            foreach (var controller in _configs.Controllers.Values)
+            foreach (var controller in _options.Value.Controllers.Values)
             {
                 if (controller.IsActive)
                 {

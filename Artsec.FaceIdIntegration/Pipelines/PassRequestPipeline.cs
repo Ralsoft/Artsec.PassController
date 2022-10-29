@@ -12,12 +12,14 @@ public class PassRequestPipeline : Pipeline<PassRequestWithPersonId>
     {
         _logger = logger;
         this
-		.AddMiddleware(new ValidationMiddleware(serviceProvider.GetRequiredService<IValidationService>(),
+        .AddMiddleware(new ValidationMiddleware(serviceProvider.GetRequiredService<IValidationService>(),
                                                    serviceProvider.GetRequiredService<ILogger<ValidationMiddleware>>()))
         .AddFunc(x => { _logger?.LogInformation($"Получен код валидации: {x.ValidCode}"); return x; })
-		.AddMiddleware(new CommandSenderMiddleware(serviceProvider.GetRequiredService<ICommandSender>(),
-												   serviceProvider.GetRequiredService<ILogger<CommandSenderMiddleware>>()))
+        .AddMiddleware(new CommandSenderMiddleware(serviceProvider.GetRequiredService<ICommandSender>(),
+                                                   serviceProvider.GetRequiredService<ILogger<CommandSenderMiddleware>>()))
         .AddMiddleware(new RequestsLoggingMiddleware(serviceProvider.GetRequiredService<IRequestsLoggingService>()))
-        .AddFunc(r => { _logger?.LogInformation($"Время выполнения запроса: {DateTime.Now - r.CreationTime}"); return r; });
+        .AddFunc(r => { _logger?.LogInformation($"Время выполнения запроса: {DateTime.Now - r.CreationTime}"); return r; })
+        .AddMiddleware(new MqttMiddleware(serviceProvider.GetRequiredService<IMqttService>()))
+        ;
     }
 }

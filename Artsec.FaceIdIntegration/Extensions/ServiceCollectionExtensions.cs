@@ -5,6 +5,7 @@ using Artsec.PassController.Listeners.Implementation;
 using Artsec.PassController.Pipelines;
 using Artsec.PassController.Services;
 using Artsec.PassController.Services.Interfaces;
+using MQTTnet;
 
 namespace Artsec.PassController.Extensions;
 
@@ -13,7 +14,7 @@ internal static class ServiceCollectionExtensions
     public static IServiceCollection AddDal(this IServiceCollection services, IConfiguration config)
     {
         services.AddSingleton<PassControllerDbContext>();
-        services.AddSingleton<IConnectionProvider>(new ConnectionProvider(config.Get<WorkerConfigurations>().ConnectionString));
+        services.AddSingleton<IConnectionProvider, DefaultConnectionProvider>();
 
         return services;
     }
@@ -25,6 +26,8 @@ internal static class ServiceCollectionExtensions
         services.AddSingleton<IRequestsLoggingService, RequestsLoggingService>();
         services.AddSingleton<IValidationService, ValidationService>();
         services.AddSingleton<IPassPointService, PassPointService>();
+        services.AddSingleton<IMqttService, MqttService>();
+        services.AddSingleton<MqttFactory>();
 
         services.AddSingleton<IInputAggregator, ListenersAggregator>();
 
@@ -46,9 +49,10 @@ internal static class ServiceCollectionExtensions
     }
     public static IServiceCollection AddConfigurations(this IServiceCollection services, IConfiguration config)
     {
-        services.AddTransient<WorkerConfigurations>(s => config.Get<WorkerConfigurations>());
-        services.AddTransient<ControllerListenerConfiguration>(s => config.Get<WorkerConfigurations>().ControllerListenerConfiguration);
-        services.AddTransient<FaceIdListenerConfiguration>(s => config.Get<WorkerConfigurations>().FaceIdListenerConfiguration);
+        services.Configure<ControllersConfigurations>(config.GetSection("WorkerConfigurations"));
+        services.Configure<ControllerListenerConfiguration>(config.GetSection("ControllerListenerConfiguration"));
+        services.Configure<FaceIdListenerConfiguration>(config.GetSection("FaceIdListenerConfiguration"));
+        services.Configure<MqttConfigurations>(config.GetSection("MqttConfigurations"));
 
         return services;
     }

@@ -2,29 +2,30 @@
 using Artsec.PassController.Domain;
 using Artsec.PassController.Domain.Exceptions;
 using Artsec.PassController.Services.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace Artsec.PassController.Services;
 
 public class PassPointService : IPassPointService
 {
-    private readonly WorkerConfigurations _configs;
+    private readonly IOptions<ControllersConfigurations> _options;
 
-    public PassPointService(WorkerConfigurations configs)
+    public PassPointService(IOptions<ControllersConfigurations> options)
     {
-        _configs = configs;
+        _options = options;
     }
     public int GetPassPointId(string ip, int channelNumber)
     {
-        return _configs.Controllers[ip].Channels[channelNumber.ToString()];
+        return _options.Value.Controllers[ip].Channels[channelNumber.ToString()];
     }
 
     public int GetPassPointIdForFaceId(int cameraId)
     {
-        return _configs.CamIdToDevId[cameraId.ToString()];
+        return _options.Value.CamIdToDevId[cameraId.ToString()];
     }
     public Controller GetControllerByDeviceId(int deviceId)
     {
-        foreach (var (ip, controller) in _configs.Controllers)
+        foreach (var (ip, controller) in _options.Value.Controllers)
         {
             if (controller.Channels.ContainsValue(deviceId))
                 return controller;
