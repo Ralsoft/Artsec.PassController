@@ -49,10 +49,11 @@ internal static class ServiceCollectionExtensions
     }
     public static IServiceCollection AddConfigurations(this IServiceCollection services, IConfiguration config)
     {
-        services.Configure<ControllersConfigurations>(config.GetSection("WorkerConfigurations"));
+        services.Configure<ControllersConfigurations>(config.GetSection("ControllersConfigurations"));
         services.Configure<ControllerListenerConfiguration>(config.GetSection("ControllerListenerConfiguration"));
         services.Configure<FaceIdListenerConfiguration>(config.GetSection("FaceIdListenerConfiguration"));
         services.Configure<MqttConfigurations>(config.GetSection("MqttConfigurations"));
+        services.Configure<AggregatorConfigurations>(config.GetSection("AggregatorConfigurations"));
 
         return services;
     }

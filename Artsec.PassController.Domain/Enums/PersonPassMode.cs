@@ -4,8 +4,8 @@ public enum AuthMode
 {
     None = 0,
     RequaredRfid = 1,
-    RequaredRfidAndFaceId = 2,
-    RequaredRfidAndAnyFaceId = 3,
-    RequaredFaceId = 4,
+    RequaredFaceId = 2,
+    RequaredRfidAndFaceId = 3,
+    RequaredRfidAndAnyFaceId = 4,
     AnyIdentifier = 5,
 }

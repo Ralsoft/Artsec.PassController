@@ -22,7 +22,7 @@ internal class RequestsLoggingService : IRequestsLoggingService
             var device = await _dbContext.Devices.GetById(request.DeviceId);
             if (device is not null)
             {
-                await _dbContext.Procedures.InsertDeviceEventAsync(request.ValidCode, device.ControllerId, request.FaceId, request.CreationTime);
+                await _dbContext.Procedures.InsertDeviceEventAsync(request.ValidCode, device.ControllerId, request.Channel, request.FaceId, request.CreationTime);
             }
             else
             {

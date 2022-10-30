@@ -32,7 +32,7 @@ public class Procedures
         var result = await command.ExecuteScalarAsync();
         return (int)result;
     }
-    public async Task<int> InsertDeviceEventAsync(int eventCode, int controllerId, string cardNumber, DateTime time)
+    public async Task<int> InsertDeviceEventAsync(int eventCode, int controllerId, int readerId, string cardNumber, DateTime time)
     {
         using var connection = _connectionProvider.CreateConnection();
         await connection.OpenAsync();
@@ -45,7 +45,7 @@ public class Procedures
 
         var param = new FbParameter("@ID_READER", FbDbType.Integer)
         {
-            Value = 0
+            Value = readerId
         };
         cmd.Parameters.Add(param);
 

@@ -25,7 +25,10 @@ internal class ValidationService : IValidationService
                 return 0;
 
             case AuthMode.RequaredRfid:
-                return await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.Rfid);
+                if (payload.Rfid is not null)
+                    return await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.FaceId);
+                else
+                    return 146;
 
             case AuthMode.RequaredRfidAndFaceId:
                 if (payload.RfidPersonId != payload.FaceIdPersonId)
@@ -34,17 +37,24 @@ internal class ValidationService : IValidationService
                 return rfidValidation;
 
             case AuthMode.RequaredRfidAndAnyFaceId:
-                if (payload.FaceId == null)
+                if (payload.FaceId is null)
                     return 146;
                 rfidValidation = await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.Rfid);
                 faceValidation = await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.FaceId);
-                if (rfidValidation == 50 || faceValidation == 50)
+                if (rfidValidation == 50)
+                {
+                    if (payload.FaceIdPersonId != payload.RfidPersonId)
+                        return 148;
                     return 50;
+                }
                 else
                     return rfidValidation != 0 ? rfidValidation : faceValidation;
 
             case AuthMode.RequaredFaceId:
-                return await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.FaceId);
+                if (payload.FaceId is not null)
+                    return await _dbContext.Procedures.ValidatePass(payload.DeviceId, payload.FaceId);
+                else
+                    return 146;
 
             case AuthMode.AnyIdentifier:
 

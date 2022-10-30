@@ -21,7 +21,7 @@ internal class ValidationMiddleware : IPipelineMiddleware<PassRequestWithPersonI
 
         var result = new PassRequestWithValidation(payload);
         int validCode = await _validationService.ValidatePassAsync(payload);
-        result.IsValid = validCode == 50;
+        result.IsValid = validCode is 50 or 148;
         result.ValidCode = validCode;
 
         return result;

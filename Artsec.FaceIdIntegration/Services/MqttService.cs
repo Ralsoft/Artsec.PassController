@@ -22,6 +22,7 @@ public class MqttService : IMqttService
     {
         try
         {
+            _logger?.LogInformation($"Отправка сообщения {message} в топик {_options.Value.Topic}");
             using var mqttClient = _mqttFactory.CreateMqttClient();
             var mqttClientOptions = new MqttClientOptionsBuilder()
                 .WithTcpServer(_options.Value.MqttServer)

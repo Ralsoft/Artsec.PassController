@@ -54,27 +54,38 @@ internal class CommandSender : ICommandSender
 
     public async Task SendOpenDoorAsync(int channel, string? remoteAddress, int remotePort)
     {
-        byte[] data;
+        byte[]? data = null;
         if (channel == 0)
+        {
+            _logger?.LogInformation("Sending OpenDoor0 command");
             data = new byte[]
                 {
-                0x02,
-                0x1F,
-                0x01,
-                0x03,
-                0xB9,
-                0x21,
-                };
-        else
-            data = new byte[]
-            {
                 0x02,
                 0x1F,
                 0x00,
                 0x03,
                 0x61,
                 0x38,
+                };
+        }
+        else if (channel == 1)
+        {
+            _logger?.LogInformation("Sending OpenDoor1 command");
+            data = new byte[]
+            {
+                0x02,
+                0x1F,
+                0x01,
+                0x03,
+                0xB9,
+                0x21,
             };
-        await SendCommandAsync(data, remoteAddress, remotePort);
+        }
+        else
+        {
+            _logger?.LogWarning($"Can't send OpenDoor command. Channel {channel} is unknown");
+        }
+        if (data is not null)
+            await SendCommandAsync(data, remoteAddress, remotePort);
     }
 }
