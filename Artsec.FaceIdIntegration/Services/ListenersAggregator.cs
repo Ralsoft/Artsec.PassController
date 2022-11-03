@@ -4,8 +4,8 @@ using Artsec.PassController.Domain.Enums;
 using Artsec.PassController.Domain.Exceptions;
 using Artsec.PassController.Domain.Messages;
 using Artsec.PassController.Domain.Requests;
+using Artsec.PassController.Listeners;
 using Artsec.PassController.Listeners.Events;
-using Artsec.PassController.Listeners.Implementation;
 using Artsec.PassController.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
@@ -16,7 +16,7 @@ namespace Artsec.PassController.Services;
 
 internal class ListenersAggregator : IInputAggregator
 {
-    private readonly ConcurrentDictionary<int, PassRequestWithPersonId> _requests = new();
+    private readonly ConcurrentDictionary<int, PassRequest> _requests = new();
 
     private readonly ControllerListener _controllerListener;
     private readonly FaceIdListener _faceIdListener;
@@ -26,7 +26,7 @@ internal class ListenersAggregator : IInputAggregator
     private readonly IPassPointService _passPointService;
     private readonly IOptions<AggregatorConfigurations> _options;
 
-    public event EventHandler<PassRequestWithPersonId> InputReceived;
+    public event EventHandler<PassRequest> InputReceived;
 
     public ListenersAggregator(
         ControllerListener controllerListener, FaceIdListener faceIdListener, ILogger<ListenersAggregator> logger,
@@ -47,7 +47,7 @@ internal class ListenersAggregator : IInputAggregator
         _faceIdListener.StartListen();
     }
 
-    private async Task RequestProcessing(PassRequestWithPersonId request, int key)
+    private async Task RequestProcessing(PassRequest request, int key)
     {
         request.DeviceId = key;
         if (request.IsReadyToProcessing())
@@ -91,10 +91,11 @@ internal class ListenersAggregator : IInputAggregator
             _logger?.LogInformation($"Канал: {channel}");
 
 
-            PassRequestWithPersonId request;
-            if (!_requests.ContainsKey(passPointId))
+            
+            
+            if (!_requests.TryGetValue(passPointId, out var request))
             {
-                var baseRequset = new PassRequest()
+                request = new PassRequest()
                 {
                     CreationTime = startTime,
                     FaceId = e.Message.FaceId,
@@ -102,16 +103,13 @@ internal class ListenersAggregator : IInputAggregator
                     RemotePort = controller.Port,
                     Channel = channel,
                     CamId = e.Message.CamId,
-                };
-                request = _requests.GetOrAdd(passPointId, new PassRequestWithPersonId(baseRequset)
-                {
                     FaceIdPersonId = personId,
                     AuthMode = authMode,
-                });
+                };
+                _requests.TryAdd(passPointId, request);
             }
             else
             {
-                request = _requests[passPointId];
                 request.FaceId = e.Message.FaceId;
                 request.CamId = e.Message.CamId;
                 request.FaceIdPersonId = personId;
@@ -121,14 +119,21 @@ internal class ListenersAggregator : IInputAggregator
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex.Message);
+            if (ex is PersonNotFoundException || ex is AuthModeNotFoundException)
+            {
+                _logger?.LogWarning(ex.Message);
+            }
+            else
+            {
+                _logger?.LogError(ex.Message, ex);
+            }
         }
     }
     private async void OnControllerListeneMessageReceived(object? sender, ReceivedRfidEventArgs e)
     {
+        var startTime = DateTime.Now;
         try
         {
-            var startTime = DateTime.Now;
             var message = RfidMessage.Parse(e.Data);
             _logger?.LogInformation($"Получен RFID: {message.RfidString}");
             int passPointId = GetPassPointId(e.RemoteIp.Address.ToString(), message.Channel);
@@ -139,11 +144,10 @@ internal class ListenersAggregator : IInputAggregator
             _logger?.LogInformation($"Получен режим авторизации: {authMode}");
 
 
-            PassRequestWithPersonId request;
-            if (!_requests.ContainsKey(passPointId))
-            {
 
-                var baseRequset = new PassRequest()
+            if (!_requests.TryGetValue(passPointId, out var request))
+            {
+                request = new PassRequest()
                 {
                     CreationTime = startTime,
                     Rfid = message.RfidString,
@@ -151,47 +155,52 @@ internal class ListenersAggregator : IInputAggregator
                     RemoteAddress = e.RemoteIp.Address.ToString(),
                     RemotePort = e.RemoteIp.Port,
                     Channel = message.Channel,
-                };
-                request = _requests.GetOrAdd(passPointId, new PassRequestWithPersonId(baseRequset)
-                {
                     RfidPersonId = personId,
                     AuthMode = authMode,
-                });
+                };
+                _requests.TryAdd(passPointId, request);
             }
             else
             {
-                request = _requests[passPointId];
                 request.Rfid = message.RfidString;
                 request.Data = e.Data;
                 request.RfidPersonId = personId;
                 request.AuthMode = authMode;
             }
-            
+
+
             _ = RequestProcessing(request, passPointId);
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex.Message);
 
             if (ex is PersonNotFoundException || ex is AuthModeNotFoundException)
             {
+                _logger?.LogWarning(ex.Message);
                 var message = RfidMessage.Parse(e.Data);
                 int passPointId = GetPassPointId(e.RemoteIp.Address.ToString(), message.Channel);
-                var baseRequset = new PassRequest()
-                {
-                    Rfid = message.RfidString,
-                    Data = e.Data,
-                    RemoteAddress = e.RemoteIp.Address.ToString(),
-                    RemotePort = e.RemoteIp.Port,
-                    Channel = message.Channel,
-                };
 
-                var request = _requests.GetOrAdd(passPointId, new PassRequestWithPersonId(baseRequset)
+
+                if (!_requests.TryGetValue(passPointId, out var request))
                 {
-                    RfidPersonId = 0,
-                    AuthMode = AuthMode.None,
-                });
-                _ = RequestProcessing(request, passPointId);
+                    request = new PassRequest()
+                    {
+                        CreationTime = startTime,
+                        Rfid = message.RfidString,
+                        Data = e.Data,
+                        RemoteAddress = e.RemoteIp.Address.ToString(),
+                        RemotePort = e.RemoteIp.Port,
+                        Channel = message.Channel,
+                        RfidPersonId = 0,
+                        AuthMode = AuthMode.None,
+                    };
+                    _requests.TryAdd(passPointId, request);
+                    _ = RequestProcessing(request, passPointId);
+                }
+            }
+            else
+            {
+                _logger?.LogError(ex.Message, ex);
             }
         }
     }

@@ -1,19 +1,20 @@
 ﻿using Artsec.PassController.Domain.Requests;
 using Artsec.PassController.Services.Interfaces;
-using PipeLight.Middlewares.Interfaces;
+using PipeLight.Nodes.Steps.Interfaces;
 using System.Text.Json;
 
 namespace Artsec.PassController.Pipelines.Middleware;
 
-internal class MqttMiddleware : IPipelineMiddleware<PassRequestWithValidation, PassRequestWithValidation>
+internal class MqttStep : IPipeStep<PassRequest>
 {
     private readonly IMqttService _mqttService;
 
-    public MqttMiddleware(IMqttService mqttService)
+    public MqttStep(IMqttService mqttService)
     {
         _mqttService = mqttService;
     }
-    public async Task<PassRequestWithValidation> InvokeAsync(PassRequestWithValidation payload)
+
+    public async Task<PassRequest> ExecuteStepAsync(PassRequest payload)
     {
         var message = JsonSerializer.Serialize(payload);
         await _mqttService.SendMessageAsync(message);

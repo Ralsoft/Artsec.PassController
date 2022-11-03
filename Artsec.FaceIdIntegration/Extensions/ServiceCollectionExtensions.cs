@@ -1,7 +1,7 @@
 ﻿using Artsec.PassController.Configs;
 using Artsec.PassController.Dal;
+using Artsec.PassController.Listeners;
 using Artsec.PassController.Listeners.Configurations;
-using Artsec.PassController.Listeners.Implementation;
 using Artsec.PassController.Pipelines;
 using Artsec.PassController.Services;
 using Artsec.PassController.Services.Interfaces;

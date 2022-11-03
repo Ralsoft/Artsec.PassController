@@ -20,6 +20,19 @@ public class PassRequest
     public int RemotePort { get; set; }
     public byte[] Data { get; set; } = Array.Empty<byte>();
 
+
+
+    public int PersonId => RfidPersonId != 0 ? RfidPersonId : FaceIdPersonId;
+    public int RfidPersonId { get; set; }
+    public int FaceIdPersonId { get; set; }
+
+
+
+
+    public bool IsValid { get; set; }
+    public int ValidCode { get; set; }
+
+
     public bool IsReadyToProcessing()
     {
         if (DateTime.Now - CreationTime > TimeSpan.FromSeconds(5))

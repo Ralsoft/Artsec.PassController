@@ -16,7 +16,7 @@ internal class RequestsLoggingService : IRequestsLoggingService
         _dbContext = dbContext;
         _logger = logger;
     }
-    public async Task Log(PassRequestWithValidation request)
+    public async Task Log(PassRequest request)
     {
         if (request.IsValid && request.FaceId is not null)
         {
@@ -24,10 +24,11 @@ internal class RequestsLoggingService : IRequestsLoggingService
             if (device is not null)
             {
                 var sw = new Stopwatch();
-                sw.Start();
-                await _dbContext.Procedures.InsertDeviceEventAsync(request.ValidCode, device.ControllerId, request.Channel, request.FaceId, request.CreationTime);
-                sw.Stop();
-                _logger?.LogInformation($"InserstDeviceEvent exec time: {sw.ElapsedMilliseconds} ms");
+                //sw.Start();
+                //await _dbContext.Procedures.InsertDeviceEventAsync(request.ValidCode, device.ControllerId, request.Channel, request.FaceId, request.CreationTime);
+                //sw.Stop();
+                //_logger?.LogInformation($"InserstDeviceEvent exec time: {sw.ElapsedMilliseconds} ms");
+                _logger?.LogInformation($"InserstDeviceEvent disabled");
             }
             else
             {

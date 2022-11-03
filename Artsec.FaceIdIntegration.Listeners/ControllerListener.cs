@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Artsec.PassController.Listeners.Implementation;
+namespace Artsec.PassController.Listeners;
 
 public class ControllerListener
 {
@@ -58,7 +58,7 @@ public class ControllerListener
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex.Message);
+                _logger?.LogError(ex.Message, ex);
             }
         }
     }

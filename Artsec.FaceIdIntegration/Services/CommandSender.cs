@@ -48,7 +48,7 @@ internal class CommandSender : ICommandSender
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex.Message, ex);
         }
     }
 

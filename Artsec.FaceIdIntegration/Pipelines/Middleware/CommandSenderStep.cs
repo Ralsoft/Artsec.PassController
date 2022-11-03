@@ -1,22 +1,23 @@
 ﻿using Artsec.PassController.Domain.Enums;
 using Artsec.PassController.Domain.Requests;
 using Artsec.PassController.Services.Interfaces;
-using PipeLight.Middlewares.Interfaces;
+using PipeLight.Nodes.Steps.Interfaces;
 
 namespace Artsec.PassController.Pipelines.Middleware;
 
-internal class CommandSenderMiddleware : IPipelineMiddleware<PassRequestWithValidation, PassRequestWithValidation>
+internal class CommandSenderStep : IPipeStep<PassRequest>
 {
     private readonly ICommandSender _commandSender;
-    private readonly ILogger<CommandSenderMiddleware> _logger;
+    private readonly ILogger<CommandSenderStep> _logger;
 
-    public CommandSenderMiddleware(ICommandSender commandSender, ILogger<CommandSenderMiddleware> logger)
+    public CommandSenderStep(ICommandSender commandSender, ILogger<CommandSenderStep> logger)
     {
         _commandSender = commandSender;
         _logger = logger;
     }
 
-    public async Task<PassRequestWithValidation> InvokeAsync(PassRequestWithValidation payload)
+
+    public async Task<PassRequest> ExecuteStepAsync(PassRequest payload)
     {
         try
         {

@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace Artsec.PassController.Listeners.Implementation;
+namespace Artsec.PassController.Listeners;
 
 public class FaceIdListener
 {
@@ -52,7 +52,7 @@ public class FaceIdListener
                     {
                         isReaded = true;
                         var faceIdMessage = JsonSerializer.Deserialize<FaceIdMessage>(match.Value);
-                        if(faceIdMessage.CamId != string.Empty)
+                        if (faceIdMessage.CamId != string.Empty)
                         {
                             MessageReceived?.Invoke(this, new ReceivedFaceIdEventArgs() { Message = faceIdMessage });
                         }
@@ -61,7 +61,7 @@ public class FaceIdListener
             }
             catch (Exception ex)
             {
-                _logger?.LogError($"Error: {ex.Message}");
+                _logger?.LogError($"Error: {ex.Message}", ex);
                 await Task.Delay(5000);
             }
         }

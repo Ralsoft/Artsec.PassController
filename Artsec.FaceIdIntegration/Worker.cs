@@ -1,7 +1,7 @@
 using Artsec.PassController.Configs;
 using Artsec.PassController.Domain;
 using Artsec.PassController.Domain.Requests;
-using Artsec.PassController.Listeners.Implementation;
+using Artsec.PassController.Listeners;
 using Artsec.PassController.Pipelines;
 using Artsec.PassController.Services.Interfaces;
 using Microsoft.Extensions.Options;
@@ -80,7 +80,7 @@ namespace Artsec.PassController
             }
         }
 
-        private void OnInputReceived(object sender, PassRequestWithPersonId request)
+        private void OnInputReceived(object sender, PassRequest request)
         {
             _logger.LogInformation("Начата обработка запроса\n" + 
                 $"CamId: {request.CamId}\n" +
@@ -96,7 +96,7 @@ namespace Artsec.PassController
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex.Message);
+                _logger?.LogError(ex.Message, ex);
             }
         }
     }

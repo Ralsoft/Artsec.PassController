@@ -19,7 +19,7 @@ internal class ValidationService : IValidationService
         _memoryCache = memoryCache;
         _logger = logger;
     }
-    public async Task<int> ValidatePassAsync(PassRequestWithPersonId payload)
+    public async Task<int> ValidatePassAsync(PassRequest payload)
     {
         int rfidValidation = 0;
         int faceValidation = 0;

@@ -4,5 +4,5 @@ namespace Artsec.PassController.Services.Interfaces;
 
 public interface IValidationService
 {
-    Task<int> ValidatePassAsync(PassRequestWithPersonId payload);
+    Task<int> ValidatePassAsync(PassRequest payload);
 }
