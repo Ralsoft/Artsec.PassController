@@ -15,7 +15,6 @@ public class FaceIdListener
     private readonly ILogger<FaceIdListener> _logger;
     private readonly IOptions<FaceIdListenerConfiguration> _options;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly HttpClient _httpClient;
     private bool _isReceiving;
 
     public event EventHandler<ReceivedFaceIdEventArgs> DataReceived;
@@ -27,13 +26,13 @@ public class FaceIdListener
         _logger = logger;
         _options = options;
         _httpClientFactory = httpClientFactory;
-        _httpClient = new HttpClient();
 
     }
     public async Task ReceiveMessage()
     {
         string url = _options.Value.Url;
         var regex = new Regex(@"\{(.|\s)*\}");
+
 
         while (_isReceiving)
         {
@@ -58,6 +57,8 @@ public class FaceIdListener
                         }
                     }
                 }
+                //_logger?.LogDebug($"streamReader.EndOfStream: {streamReader.EndOfStream}");
+                //_logger?.LogDebug($"isReaded: {isReaded}");
             }
             catch (Exception ex)
             {
