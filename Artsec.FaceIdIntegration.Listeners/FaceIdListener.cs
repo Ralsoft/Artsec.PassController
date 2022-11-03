@@ -34,12 +34,12 @@ public class FaceIdListener
     {
         string url = _options.Value.Url;
         var regex = new Regex(@"\{(.|\s)*\}");
-        var httpClient = _httpClientFactory.CreateClient();
 
         while (_isReceiving)
         {
             try
             {
+                using var httpClient = _httpClientFactory.CreateClient();
                 using var streamReader = new StreamReader(await httpClient.GetStreamAsync(url));
                 bool isReaded = false;
                 while (!streamReader.EndOfStream && !isReaded)
