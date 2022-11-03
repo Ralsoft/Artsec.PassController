@@ -1,8 +1,6 @@
 ﻿using Artsec.PassController.Dal.Base;
 using Artsec.PassController.Dal.Models;
 using Artsec.PassController.Dal.Repositories;
-using Dapper;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Artsec.PassController.Dal;
 

@@ -1,26 +1,39 @@
 ﻿using Artsec.PassController.Dal.Models;
-using Dapper;
+using FirebirdSql.Data.FirebirdClient;
 
 namespace Artsec.PassController.Dal.Repositories;
 
 public class DeviceRepository
 {
-	private readonly IConnectionProvider _connectionProvider;
+    private readonly IConnectionProvider _connectionProvider;
 
-	public DeviceRepository(IConnectionProvider connectionProvider)
-	{
-		_connectionProvider = connectionProvider;
+    public DeviceRepository(IConnectionProvider connectionProvider)
+    {
+        _connectionProvider = connectionProvider;
     }
     public async Task<DeviceModel?> GetByIdAsync(int id)
     {
+        DeviceModel? result = null;
         var sql =
             "select d.ID_DEV, d.ID_CTRL " +
             "FROM DEVICE d " +
             "WHERE d.ID_DEV = @Id";
 
-        var parameters = new { Id = id };
         using var connection = _connectionProvider.CreateConnection();
-        var result = await connection.QueryFirstOrDefaultAsync<DeviceModel>(sql, parameters);
+        using var command = new FbCommand(sql, connection);
+        command.Parameters.Add("@Id", id);
+        connection.Open();
+
+        using var reader = await command.ExecuteReaderAsync();
+        await reader.ReadAsync();
+        if (reader.HasRows)
+        {
+            result = new()
+            {
+                Id = (int)reader["ID_DEV"],
+                ControllerId = (int)reader["ID_CTRL"],
+            };
+        }
         return result;
     }
 }

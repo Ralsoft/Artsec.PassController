@@ -1,7 +1,5 @@
-﻿using Dapper;
-using FirebirdSql.Data.FirebirdClient;
+﻿using FirebirdSql.Data.FirebirdClient;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 
 namespace Artsec.PassController.Dal;
