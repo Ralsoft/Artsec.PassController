@@ -55,7 +55,6 @@ public class ControllerListener
                 string message = BitConverter.ToString(data);
                 _logger?.LogInformation($"Receiver get message: {message} from {result.RemoteEndPoint}");
                 MessageReceived?.Invoke(this, new ReceivedRfidEventArgs(data, result.RemoteEndPoint, null));
-
             }
             catch (Exception ex)
             {

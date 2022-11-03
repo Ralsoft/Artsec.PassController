@@ -1,5 +1,9 @@
 using Artsec.PassController.Dal;
+using Artsec.PassController.Dal.Models;
+using FirebirdSql.Data.FirebirdClient;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Concurrent;
+using System.Text;
 
 namespace Artsec.PassController.Tests;
 
@@ -56,8 +60,46 @@ public class DalTests
         var connectionProvider = new DefaultConnectionProvider(GetConfigs());
         var dbContext = new PassControllerDbContext(connectionProvider);
 
-        var result = await dbContext.Devices.GetById(5);
+        var result = await dbContext.Devices.GetByIdAsync(5);
 
         Assert.NotNull(result);
+    }
+    [Fact]
+    public async Task ConnectionsStessTest()
+    {
+        var connectionProvider = new DefaultConnectionProvider(GetConfigs());
+        var results = new List<IEnumerable<PeopleModel>>();
+        var connections = new List<FbConnection>();
+        var dbContext = new PassControllerDbContext(connectionProvider);
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+        //for (int i = 0; i < 100; i++)
+        //{
+        //    var con = connectionProvider.CreateConnection();
+        //    connections.Add(con);
+        //}
+        //for (int i = 0; i < 100; i++)
+        //{
+        //    connections[i].Open();
+        //}
+        //results.Add(await dbContext.People.GetAsync());
+        Parallel.For(0, 2, async i =>
+        {
+            var result = await dbContext.People.GetAsync();
+            results.Add(result);
+        });
+
+        for (int i = 0; i < 100; i++)
+        {
+            results.Add(await dbContext.People.GetAsync());
+            await Task.Delay(10);
+        }
+
+        //var tasks = Enumerable.Range(0, 100)
+        //                    .Select(i => dbContext.People.GetAsync());
+        //results = (await Task.WhenAll(tasks)).ToList();
+
+
+        //Assert.NotNull(result);
     }
 }

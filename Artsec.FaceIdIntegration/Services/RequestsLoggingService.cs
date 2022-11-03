@@ -2,6 +2,7 @@
 using Artsec.PassController.Domain.Enums;
 using Artsec.PassController.Domain.Requests;
 using Artsec.PassController.Services.Interfaces;
+using System.Diagnostics;
 
 namespace Artsec.PassController.Services;
 
@@ -19,10 +20,14 @@ internal class RequestsLoggingService : IRequestsLoggingService
     {
         if (request.IsValid && request.FaceId is not null)
         {
-            var device = await _dbContext.Devices.GetById(request.DeviceId);
+            var device = await _dbContext.Devices.GetByIdAsync(request.DeviceId);
             if (device is not null)
             {
+                var sw = new Stopwatch();
+                sw.Start();
                 await _dbContext.Procedures.InsertDeviceEventAsync(request.ValidCode, device.ControllerId, request.Channel, request.FaceId, request.CreationTime);
+                sw.Stop();
+                _logger?.LogInformation($"InserstDeviceEvent exec time: {sw.ElapsedMilliseconds} ms");
             }
             else
             {

@@ -22,13 +22,12 @@ public class Procedures
         using var connection = _connectionProvider.CreateConnection();
         await connection.OpenAsync();
 
-        var command = connection.CreateCommand();
+        using var command = connection.CreateCommand();
         command.CommandText = "VALIDATEPASS";
         command.CommandType = CommandType.StoredProcedure;
         command.Parameters.Add("ID_DEV", deviceId);
         command.Parameters.Add("ID_CARD", identifier);
         command.Parameters.Add("GRZ", null);
-
         var result = await command.ExecuteScalarAsync();
         return (int)result;
     }
@@ -36,7 +35,7 @@ public class Procedures
     {
         using var connection = _connectionProvider.CreateConnection();
         await connection.OpenAsync();
-        await using var cmd = new FbCommand("DEVICEEVENTS_INSERT", connection);
+        using var cmd = new FbCommand("DEVICEEVENTS_INSERT", connection);
         cmd.CommandType = CommandType.StoredProcedure;
 
         cmd.Parameters.Add("@ID_DB", 1);

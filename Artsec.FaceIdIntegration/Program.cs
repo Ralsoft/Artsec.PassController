@@ -1,9 +1,11 @@
 using Artsec.PassController;
 using Artsec.PassController.Configs;
 using Artsec.PassController.Extensions;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
+using System.Reflection;
 using System.Text;
 
 try
@@ -19,7 +21,7 @@ try
             logging.AddConfiguration(context.Configuration.GetSection("Logging"));
             logging.AddConsole();
             int? retainedFileCountLimit = context.Configuration.GetSection("WorkerOptions").GetValue<int?>("retainedFileCountLimit");
-            var path = Directory.GetCurrentDirectory();
+            var path = AppDomain.CurrentDomain.BaseDirectory;
             logging.AddFile(
                 pathFormat: $"{path}\\Logs\\Log.log",
                 minimumLevel: LogLevel.Trace,
@@ -28,6 +30,7 @@ try
         })
         .ConfigureAppConfiguration((hostingContext, config) =>
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             config.AddJsonFile("connectionsSettings.json", optional: false, reloadOnChange: false);
             config.AddJsonFile("controllersSettings.json", optional: false, reloadOnChange: false);
         })
@@ -35,13 +38,13 @@ try
         {
             services.AddConfigurations(hostContext.Configuration);
             services.AddHostedService<Worker>();
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             //IConfiguration configuration = hostContext.Configuration;
             //WorkerOptions options = configuration.GetSection("WorkerOptions").Get<WorkerOptions>();
             services.AddHttpClient();
             services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
 
+            services.AddMemoryCache();
             services.AddListeners();
             services.AddServices();
             services.AddPipelines();

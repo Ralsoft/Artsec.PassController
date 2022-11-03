@@ -11,7 +11,7 @@ public class DeviceRepository
 	{
 		_connectionProvider = connectionProvider;
     }
-    public async Task<DeviceModel> GetById(int id)
+    public async Task<DeviceModel?> GetByIdAsync(int id)
     {
         var sql =
             "select d.ID_DEV, d.ID_CTRL " +

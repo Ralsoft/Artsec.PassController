@@ -73,6 +73,7 @@ internal class ListenersAggregator : IInputAggregator
     {
         try
         {
+            var startTime = DateTime.Now;
             if (e.Message.SrcAction != "FIND_PERSON")
                 return;
             _logger?.LogInformation(
@@ -93,9 +94,9 @@ internal class ListenersAggregator : IInputAggregator
             PassRequestWithPersonId request;
             if (!_requests.ContainsKey(passPointId))
             {
-
                 var baseRequset = new PassRequest()
                 {
+                    CreationTime = startTime,
                     FaceId = e.Message.FaceId,
                     RemoteAddress = controller.Ip,
                     RemotePort = controller.Port,
@@ -127,6 +128,7 @@ internal class ListenersAggregator : IInputAggregator
     {
         try
         {
+            var startTime = DateTime.Now;
             var message = RfidMessage.Parse(e.Data);
             _logger?.LogInformation($"Получен RFID: {message.RfidString}");
             int passPointId = GetPassPointId(e.RemoteIp.Address.ToString(), message.Channel);
@@ -143,6 +145,7 @@ internal class ListenersAggregator : IInputAggregator
 
                 var baseRequset = new PassRequest()
                 {
+                    CreationTime = startTime,
                     Rfid = message.RfidString,
                     Data = e.Data,
                     RemoteAddress = e.RemoteIp.Address.ToString(),
@@ -170,7 +173,7 @@ internal class ListenersAggregator : IInputAggregator
         {
             _logger?.LogError(ex.Message);
 
-            if (ex is PersonNotFoundException || ex is AuthModeNotFoundExeption)
+            if (ex is PersonNotFoundException || ex is AuthModeNotFoundException)
             {
                 var message = RfidMessage.Parse(e.Data);
                 int passPointId = GetPassPointId(e.RemoteIp.Address.ToString(), message.Channel);
