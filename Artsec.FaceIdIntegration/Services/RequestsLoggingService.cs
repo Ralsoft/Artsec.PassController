@@ -24,11 +24,11 @@ internal class RequestsLoggingService : IRequestsLoggingService
             if (device is not null)
             {
                 var sw = new Stopwatch();
-                //sw.Start();
-                //await _dbContext.Procedures.InsertDeviceEventAsync(request.ValidCode, device.ControllerId, request.Channel, request.FaceId, request.CreationTime);
-                //sw.Stop();
-                //_logger?.LogInformation($"InserstDeviceEvent exec time: {sw.ElapsedMilliseconds} ms");
-                _logger?.LogInformation($"InserstDeviceEvent disabled");
+                sw.Start();
+                await _dbContext.Procedures.InsertDeviceEventAsync(request.ValidCode, device.ControllerId, request.Channel, request.FaceId, request.CreationTime);
+                sw.Stop();
+                _logger?.LogInformation($"InserstDeviceEvent exec time: {sw.ElapsedMilliseconds} ms");
+                //_logger?.LogInformation($"InserstDeviceEvent disabled");
             }
             else
             {
