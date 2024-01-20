@@ -19,6 +19,7 @@ public class CardRepository
             "from card c join people p on p.id_pep = c.id_pep ";
 
         using var connection = _connectionProvider.CreateConnection();
+        await connection.OpenAsync();
         var result = await connection.QueryAsync<CardModel, PeopleModel, CardModel>(
             sql,
             (card, pep) => { card.People = pep; return card; },
@@ -35,7 +36,8 @@ public class CardRepository
 
         var parameters = new { Id = id };
         using var connection = _connectionProvider.CreateConnection();
-        var result = await connection.QueryAsync<CardModel, PeopleModel, CardModel>(
+        await connection.OpenAsync();
+        var result = await connection.Connection.QueryAsync<CardModel, PeopleModel, CardModel>(
             sql,
             (card, pep) => { card.People = pep; return card; },
             param: parameters,

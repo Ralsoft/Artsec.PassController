@@ -22,6 +22,7 @@ public class PeopleRepository
                 "from people ";
 
             using var connection = _connectionProvider.CreateConnection();
+            await connection.OpenAsync();
             var result = await connection.QueryAsync<PeopleModel>(
                 sql
             );
@@ -43,6 +44,7 @@ public class PeopleRepository
         var parameters = new { Id = id };
 
         using var connection = _connectionProvider.CreateConnection();
+        await connection.OpenAsync();
         var result = await connection.QueryFirstOrDefaultAsync<PeopleModel>(
             sql,
             param: parameters

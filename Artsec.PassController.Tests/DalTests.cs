@@ -124,6 +124,8 @@ public class DalTests
                 //results.Add(await dbContext.People.GetAsync());
                 try
                 {
+                    //results.Add(await dbContext.People.GetAsync());
+                    await dbContext.Cards.GetByIdAsync("000");
                     results.Add(await dbContext.Procedures.ValidatePass(1, "6063"));
                 }
                 catch (FbException)
