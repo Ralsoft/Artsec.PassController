@@ -3,8 +3,6 @@ using Artsec.PassController.Listeners.Configurations;
 using Artsec.PassController.Listeners.Events;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -41,18 +39,18 @@ public class FaceIdListener
             {
                 using var httpClient = _httpClientFactory.CreateClient();
                 using var streamReader = new StreamReader(await httpClient.GetStreamAsync(url));
-                bool isReaded = false;
-                while (!streamReader.EndOfStream && !isReaded)
+                bool isRead = false;
+                while (!streamReader.EndOfStream && !isRead)
                 {
-                    var message = await streamReader.ReadLineAsync();
+                    var message = await streamReader.ReadLineAsync() ?? string.Empty;
                     //_logger?.LogDebug(message);
 
                     var match = regex.Match(message);
                     if (match.Success)
                     {
-                        isReaded = true;
+                        isRead = true;
                         var faceIdMessage = JsonSerializer.Deserialize<FaceIdMessage>(match.Value);
-                        if (faceIdMessage.CamId != string.Empty)
+                        if (faceIdMessage is not null && faceIdMessage.CamId != string.Empty)
                         {
                             MessageReceived?.Invoke(this, new ReceivedFaceIdEventArgs() { Message = faceIdMessage });
                         }

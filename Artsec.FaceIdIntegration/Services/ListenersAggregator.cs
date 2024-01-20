@@ -1,5 +1,4 @@
 ﻿using Artsec.PassController.Configs;
-using Artsec.PassController.Domain;
 using Artsec.PassController.Domain.Enums;
 using Artsec.PassController.Domain.Exceptions;
 using Artsec.PassController.Domain.Messages;
@@ -9,8 +8,6 @@ using Artsec.PassController.Listeners.Events;
 using Artsec.PassController.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
-using System.Text;
-using System.Threading.Channels;
 
 namespace Artsec.PassController.Services;
 
@@ -69,6 +66,7 @@ internal class ListenersAggregator : IInputAggregator
             _requests.TryRemove(key, out _);
         }
     }
+
     private async void OnFaceIdListeneMessageReceived(object? sender, ReceivedFaceIdEventArgs e)
     {
         try
@@ -79,7 +77,7 @@ internal class ListenersAggregator : IInputAggregator
             _logger?.LogInformation(
                 $"Получен FaceId: {e.Message.FaceId}\n" +
                 $"От  CamId: {e.Message.CamId}");
-            int passPointId = GetPassPointIdForFaceId(int.Parse(e.Message.CamId));;
+            int passPointId = GetPassPointIdForFaceId(int.Parse(e.Message.CamId));
             _logger?.LogInformation($"Точка прохода: {passPointId}");
             int personId = await GetPersonIdAsync(e.Message.FaceId);
             _logger?.LogInformation($"Для него PersonId: {personId}");
@@ -91,8 +89,6 @@ internal class ListenersAggregator : IInputAggregator
             _logger?.LogInformation($"Канал: {channel}");
 
 
-            
-            
             if (!_requests.TryGetValue(passPointId, out var request))
             {
                 request = new PassRequest()
@@ -129,6 +125,7 @@ internal class ListenersAggregator : IInputAggregator
             }
         }
     }
+
     private async void OnControllerListeneMessageReceived(object? sender, ReceivedRfidEventArgs e)
     {
         var startTime = DateTime.Now;
@@ -142,7 +139,6 @@ internal class ListenersAggregator : IInputAggregator
             _logger?.LogInformation($"Получен PersonId: {personId}");
             var authMode = await GetAuthModeAsync(personId);
             _logger?.LogInformation($"Получен режим авторизации: {authMode}");
-
 
 
             if (!_requests.TryGetValue(passPointId, out var request))
@@ -173,7 +169,6 @@ internal class ListenersAggregator : IInputAggregator
         }
         catch (Exception ex)
         {
-
             if (ex is PersonNotFoundException || ex is AuthModeNotFoundException)
             {
                 _logger?.LogWarning(ex.Message);
@@ -200,7 +195,10 @@ internal class ListenersAggregator : IInputAggregator
             }
             else
             {
-                _logger?.LogError(ex.Message, ex);
+                _logger?.LogError(ex, "ErrType: {ErrType}, ErrMessage: {ErrMessage}, StackTrace: {StackTrace}",
+                    ex,
+                    ex.Message,
+                    ex.StackTrace);
             }
         }
     }
@@ -209,14 +207,17 @@ internal class ListenersAggregator : IInputAggregator
     {
         return await _personPassModeService.GetPersonAuthModeAsync(personId);
     }
+
     private int GetPassPointId(string ip, int channelNumber)
     {
         return _passPointService.GetPassPointId(ip, channelNumber);
     }
+
     private int GetPassPointIdForFaceId(int channelNumber)
     {
         return _passPointService.GetPassPointIdForFaceId(channelNumber);
     }
+
     private async Task<int> GetPersonIdAsync(string? identifier)
     {
         return await _personService.GetPersonIdAsync(identifier);

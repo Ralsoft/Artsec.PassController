@@ -19,10 +19,10 @@ public class Procedures
     {
         if (identifier.Length > 12)
             throw new ValidationException($"Identifier max length is 12");
-        using var connection = _connectionProvider.CreateConnection();
+        await using var connection = _connectionProvider.CreateConnection();
         await connection.OpenAsync();
 
-        using var command = connection.CreateCommand();
+        await using var command = connection.CreateCommand();
         command.CommandText = "VALIDATEPASS";
         command.CommandType = CommandType.StoredProcedure;
         command.Parameters.Add("ID_DEV", deviceId);
@@ -33,9 +33,9 @@ public class Procedures
     }
     public async Task<int> InsertDeviceEventAsync(int eventCode, int controllerId, int readerId, string cardNumber, DateTime time)
     {
-        using var connection = _connectionProvider.CreateConnection();
+        await using var connection = _connectionProvider.CreateConnection();
         await connection.OpenAsync();
-        using var cmd = new FbCommand("DEVICEEVENTS_INSERT", connection);
+        await using var cmd = new FbCommand("DEVICEEVENTS_INSERT", connection.Connection);
         cmd.CommandType = CommandType.StoredProcedure;
 
         cmd.Parameters.Add("@ID_DB", 1);
@@ -57,8 +57,8 @@ public class Procedures
         cmd.Parameters.Add("@IDSOURCE", 1);
         cmd.Parameters.Add("@IDSERVERTS", 1);
 
-        var responce = await cmd.ExecuteScalarAsync();
-        if (int.TryParse(responce?.ToString(), out int result))
+        var response = await cmd.ExecuteScalarAsync();
+        if (int.TryParse(response?.ToString(), out int result))
             return result;
 
         return -1;

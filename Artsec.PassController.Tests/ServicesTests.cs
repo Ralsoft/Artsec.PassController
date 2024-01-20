@@ -37,7 +37,7 @@ namespace Artsec.PassController.Tests
             var serviceProvider = services.BuildServiceProvider();
 
 
-            var connectionProvider = new DefaultConnectionProvider(GetConfigs());
+            var connectionProvider = new DefaultConnectionProvider(GetConfigs(), null);
             var dbContext = new PassControllerDbContext(connectionProvider);
 
             IPersonService service = new PersonService(dbContext, serviceProvider.GetRequiredService<IMemoryCache>(), null);
